@@ -6,7 +6,7 @@ class Game:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption(title)
-        self.screen=pygame.display.set_mode(screen_size)
+        self.screen=pygame.display.set_mode((screen_size),pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
         self.clock=pygame.time.Clock() 
         self.start_screen=True
         self.playing=True

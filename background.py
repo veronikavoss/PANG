@@ -5,7 +5,7 @@ from asset import Asset
 class Background(Asset):
     def __init__(self,screen,level):
         Asset.__init__(self)
-        self.background()
+        self.get_background()
         self.screen=screen
         self.background_image=self.background_images[level-1]
     
@@ -15,7 +15,7 @@ class Background(Asset):
 class Foreground(Asset):
     def __init__(self,screen,level):
         Asset.__init__(self)
-        self.foreground()
+        self.get_foreground()
         self.screen=screen
         self.foreground_image=self.foreground_images[level-1]
     
