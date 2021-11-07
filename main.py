@@ -30,6 +30,9 @@ class Game:
                 if self.playing:
                     self.playing=False
                     break
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_ESCAPE:
+                    self.playing=False
     
     def update(self):
         self.controller.update()
@@ -37,8 +40,6 @@ class Game:
     def draw(self):
         self.screen.fill('white')
         self.controller.draw()
-    
-    # print()
 #%%
 game=Game()
 pygame.quit()

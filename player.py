@@ -4,14 +4,14 @@ from asset import Asset
 from weapon import *
 #%%
 class Player(pygame.sprite.Sprite,Asset):
-    def __init__(self,screen):
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         Asset.__init__(self)
         self.get_player()
         self.get_launch_effect()
-        self.screen=screen
         
         self.action='standby'
+        self.weapon_type='normal'
         self.index=0
         self.image=self.player_images[self.action][self.index]
         self.rect=self.image.get_rect(midbottom=(screen_width//2,stage_bottom))
@@ -25,11 +25,11 @@ class Player(pygame.sprite.Sprite,Asset):
         self.animation_speed=0.1
         
         self.flip=False
-        self.double_wire=False
-        self.vulcan_missile=True
+        self.pressed=False
         self.launched=False
         
         self.weapon_sprite=pygame.sprite.Group()
+        self.launch_effect=pygame.sprite.GroupSingle()
     
     def key_input(self):
         self.rect.x+=self.dx
@@ -49,33 +49,27 @@ class Player(pygame.sprite.Sprite,Asset):
         else:
             self.dx=0
         
-        if key_input[pygame.K_SPACE]:
-            self.launch_effect()
+        if key_input[pygame.K_SPACE] and not self.pressed:
+            self.pressed=True
+            self.launch_effect.add(Launch_Effect(self.rect.midtop))
             self.weapon_launch()
-    
-    def launch_effect(self):
-        self.launch_effect_index+=self.launch_effect_animation_speed
-        if self.launch_effect_index>=len(self.launch_effects):
-            self.launch_effect_index=0
-        self.effect_image=self.launch_effects[int(self.launch_effect_index)]
-        self.effect_image_rect=self.effect_image.get_rect(midbottom=self.rect.midtop)
-        return self.effect_image
+            self.pressed=False
     
     def weapon_launch(self):
-        if self.double_wire:
+        if self.weapon_type=='double_wire':
             if len(self.weapon_sprite)<2:
-                self.weapon_sprite.add(Weapon(self.rect.midtop))
+                self.weapon_sprite.add(Weapon(self.rect.midtop,self.weapon_type))
                 if len(self.weapon_sprite)==2:
                     self.launched=True
-        elif self.vulcan_missile:
-            self.weapon_sprite.add(Weapon(self.rect.midtop))
+        elif self.weapon_type=='vulcan_missile':
+            self.weapon_sprite.add(Weapon(self.rect.midtop,self.weapon_type))
         else:
             if len(self.weapon_sprite)==0:
-                self.weapon_sprite.add(Weapon(self.rect.midtop))
+                self.weapon_sprite.add(Weapon(self.rect.midtop,self.weapon_type))
                 self.launched=True
     
     def set_action(self):
-        if not self.launched:
+        if not self.pressed:
             if self.dx!=0:
                 self.action='move_x'
                 self.animation_speed=0.2
@@ -98,8 +92,4 @@ class Player(pygame.sprite.Sprite,Asset):
     def update(self):
         self.key_input()
         self.set_action()
-        # self.launch_effect()
         self.animation()
-    
-    def draw(self):
-        self.screen.blit(self.launch_effect(),self.effect_image_rect)

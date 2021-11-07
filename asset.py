@@ -64,9 +64,9 @@ class Asset:
     
     def get_weapon(self):
         self.weapon_images={
-            'weapon1':[],
-            'weapon2':[],
-            'weapon3':[]
+            'normal':[],
+            'power_wire':[],
+            'vulcan_missile':[]
         }
         weapon1=pygame.Surface((9,189))
         weapon1.blit(self.items_weapons_sheet,(0,0),(399,1568,9,189))
@@ -74,8 +74,8 @@ class Asset:
         weapon1=pygame.transform.scale(weapon1,(9*3,189*3))
         weapon1_flip=pygame.Surface.copy(weapon1)
         weapon1_flip=pygame.transform.flip(weapon1_flip,True,False)
-        self.weapon_images['weapon1'].append(weapon1)
-        self.weapon_images['weapon1'].append(weapon1_flip)
+        self.weapon_images['normal'].append(weapon1)
+        self.weapon_images['normal'].append(weapon1_flip)
         
         weapon2=pygame.Surface((9,191))
         weapon2.blit(self.items_weapons_sheet,(0,0),(382,1101,9,191))
@@ -87,9 +87,9 @@ class Asset:
         weapon2_stop.blit(self.items_weapons_sheet,(0,0),(399,1101,9,191))
         weapon2_stop.set_colorkey((103,150,86))
         weapon2_stop=pygame.transform.scale(weapon2_stop,(9*3,191*3))
-        self.weapon_images['weapon2'].append(weapon2)
-        self.weapon_images['weapon2'].append(weapon2_flip)
-        self.weapon_images['weapon2'].append(weapon2_stop)
+        self.weapon_images['power_wire'].append(weapon2)
+        self.weapon_images['power_wire'].append(weapon2_flip)
+        self.weapon_images['power_wire'].append(weapon2_stop)
         
         weapon3=[[94,261,16,9],[108,261,16,9],[126,261,16,9],[148,261,16,9],[171,261,16,9],[191,261,16,9],[211,261,16,9]]
         for weapon in weapon3:
@@ -97,7 +97,7 @@ class Asset:
             w3.blit(self.items_weapons_sheet,(0,0),weapon)
             w3.set_colorkey((103,150,86))
             w3=pygame.transform.scale(w3,(16*3,9*3))
-            self.weapon_images['weapon3'].append(w3)
+            self.weapon_images['vulcan_missile'].append(w3)
     
     def get_launch_effect(self):
         self.launch_effects=[]
