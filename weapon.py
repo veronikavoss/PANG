@@ -18,18 +18,32 @@ class Weapon(pygame.sprite.Sprite,Asset):
         animation=self.weapon_images[self.weapon_type]
         self.rect.y-=8
         self.index+=self.animation_speed
-        if self.index>=2:
-            self.index=0
+        
         if self.rect.top<=stage_top:
             if self.weapon_type=='normal':
+                self.rect.top=stage_top
+                self.index=0
                 self.kill()
+            elif self.weapon_type=='vulcan_missile':
+                self.rect.top=stage_top
+                if self.index>=len(animation):
+                    self.index=0
+                    self.kill()
             elif self.weapon_type=='power_wire':
                 self.index=2
                 self.rect.top=stage_top
+        else:
+            if self.weapon_type=='vulcan_missile':
+                if self.index>=5:
+                    self.index=3
+            else:
+                if self.index>=2:
+                    self.index=0
         self.image=animation[int(self.index)]
     
     def update(self):
         self.animation()
+        
 
 class Launch_Effect(pygame.sprite.Sprite,Asset):
     def __init__(self,midbottom):
