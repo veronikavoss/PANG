@@ -8,7 +8,6 @@ class Player(pygame.sprite.Sprite,Asset):
         pygame.sprite.Sprite.__init__(self)
         Asset.__init__(self)
         self.get_player()
-        self.get_launch_effect()
         
         self.action='standby'
         self.weapon='single_wire' # single_wire,double_wire,power_wire,vulcan_missile
@@ -26,6 +25,7 @@ class Player(pygame.sprite.Sprite,Asset):
         self.Ready_for_Launch=True
         self.vulcan_missile_Ready_for_Launch=True
         self.launched=False
+        self.k_space_pressed=False
         
         self.weapon_sprite=pygame.sprite.Group()
         self.launch_effect=pygame.sprite.GroupSingle()
@@ -48,9 +48,13 @@ class Player(pygame.sprite.Sprite,Asset):
         else:
             self.dx=0
         
-        if key_input[pygame.K_SPACE] and self.Ready_for_Launch and self.vulcan_missile_Ready_for_Launch:
-            self.launch_effect.add(Launch_Effect(self.rect.midtop))
-            self.weapon_launch()
+        if key_input[pygame.K_SPACE]:
+            if self.Ready_for_Launch and not self.k_space_pressed:
+                self.weapon_launch()
+                self.launch_effect.add(Launch_Effect(self.rect.midtop))
+                self.k_space_pressed=True
+        else:
+            self.k_space_pressed=False
         
         if key_input[pygame.K_s]:
             self.weapon='single_wire'
@@ -64,18 +68,10 @@ class Player(pygame.sprite.Sprite,Asset):
     def weapon_launch(self):
         if self.weapon_type=='vulcan_missile':
             self.weapon_sprite.add(Weapon(self.rect.midtop,self.weapon_type))
-            self.vulcan_missile_Ready_for_Launch=False
             self.launched=True
-            self.vulcan_missile_update=pygame.time.get_ticks()
         else:
             self.weapon_sprite.add(Weapon(self.rect.midtop,self.weapon_type))
             self.launched=True
-    
-    def vulcan_missile_cooldown(self):
-        if not self.vulcan_missile_Ready_for_Launch:
-            current_time=pygame.time.get_ticks()
-            if current_time-self.vulcan_missile_update>=300:
-                self.vulcan_missile_Ready_for_Launch=True
     
     def collision(self):
         pass
@@ -108,8 +104,6 @@ class Player(pygame.sprite.Sprite,Asset):
                 self.Ready_for_Launch=False
             else:
                 self.Ready_for_Launch=True
-        # elif self.weapon_type=='vulcan_missile':
-        #     self.weapon_sprite.add(Weapon(self.rect.midtop,self.weapon_type))
     
     def animation(self):
         self.index+=self.animation_speed
@@ -129,10 +123,9 @@ class Player(pygame.sprite.Sprite,Asset):
     
     def update(self):
         self.key_input()
-        self.vulcan_missile_cooldown()
         self.collision()
         self.set_action()
         self.set_weapon()
         self.animation()
         
-        # print(self.Ready_for_Launch,len(self.weapon_sprite))
+        print(self.k_space_pressed)
