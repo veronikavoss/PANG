@@ -7,3 +7,4 @@ class Item_and_Food(pygame.sprite.Sprite,Asset):
         pygame.sprite.Sprite.__init__(self)
         Asset.__init__(self)
     
+#%%

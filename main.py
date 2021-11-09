@@ -1,6 +1,8 @@
 #%%
 from setting import *
-from controller import *
+from background import *
+from player import Player
+from level import Level
 #%%
 class Game:
     def __init__(self):
@@ -14,7 +16,10 @@ class Game:
         self.start()
     
     def start(self):
-        self.controller=Controller(self.screen)
+        self.levels=Level()
+        self.background=Background(self.screen,self.levels.level)
+        self.foreground=Foreground(self.screen,self.levels.level)
+        self.player=pygame.sprite.GroupSingle(Player(self.levels.level))
         self.loop()
     
     def loop(self):
@@ -38,12 +43,18 @@ class Game:
                     self.playing=False
     
     def update(self):
-        self.controller.update()
+        self.player.sprite.weapon_sprite.update()
+        self.player.sprite.launch_effect.update()
+        self.player.sprite.balloons.update()
+        self.player.update()
     
     def draw(self):
-        self.screen.fill('white')
-        self.controller.draw()
-        print(self.info,pygame.display.list_modes())
+        self.background.draw()
+        self.player.sprite.weapon_sprite.draw(self.screen)
+        self.player.sprite.launch_effect.draw(self.screen)
+        self.player.sprite.balloons.draw(self.screen)
+        self.foreground.draw()
+        self.player.draw(self.screen)
 #%%
 game=Game()
 pygame.quit()
