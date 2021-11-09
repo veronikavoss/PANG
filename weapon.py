@@ -4,20 +4,23 @@ from setting import *
 class Weapon(pygame.sprite.Sprite):
     def __init__(self,midtop,weapon_type):
         pygame.sprite.Sprite.__init__(self)
-        self.get_weapons()
         self.weapon_type=weapon_type
+        self.get_weapons()
         self.index=0
         self.image=self.weapon_images[self.weapon_type][self.index]
+        self.init_weapon_position()
+        self.image.set_colorkey((103,150,86))
+        self.rect=self.image.get_rect(midtop=midtop)
+        self.animation_speed=0.1
+        self.flip=False
+    
+    def init_weapon_position(self):
         if self.weapon_type=='normal':
             self.image=pygame.transform.scale(self.image,(9*3,189*3))
         elif self.weapon_type=='power_wire':
             self.image=pygame.transform.scale(self.image,(9*3,191*3))
         elif self.weapon_type=='vulcan_missile':
             self.image=pygame.transform.scale(self.image,(16*3,9*3))
-        self.image.set_colorkey((103,150,86))
-        self.rect=self.image.get_rect(midtop=midtop)
-        self.animation_speed=0.1
-        self.flip=False
     
     def get_weapons(self):
         self.weapon_images={
@@ -32,9 +35,11 @@ class Weapon(pygame.sprite.Sprite):
         for i in range(1,8):
             self.weapon_images['vulcan_missile'].append(pygame.image.load(os.path.join(weapon_path,f'vulcan_missile_{i}.png')).convert_alpha())
     
+    def collision(self):
+        self.rect.y-=8
+    
     def animation(self):
         animation=self.weapon_images[self.weapon_type]
-        self.rect.y-=8
         self.index+=self.animation_speed
         
         if self.rect.top<=stage_top:
@@ -68,6 +73,7 @@ class Weapon(pygame.sprite.Sprite):
         self.image.set_colorkey((103,150,86))
     
     def update(self):
+        self.collision()
         self.animation()
 
 class Launch_Effect(pygame.sprite.Sprite):

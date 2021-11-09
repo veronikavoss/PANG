@@ -1,19 +1,24 @@
 #%%
 from setting import *
-from controller import *
+from background import *
+from player import *
 #%%
 class Game:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption(title)
-        self.screen=pygame.display.set_mode((screen_size),pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+        self.screen=pygame.display.set_mode((screen_size),pygame.RESIZABLE)
+        self.info=pygame.display.Info()
         self.clock=pygame.time.Clock() 
         self.start_screen=True
         self.playing=True
+        self.level=1
         self.start()
     
     def start(self):
-        self.controller=Controller(self.screen)
+        self.background=Background(self.screen,self.level)
+        self.foreground=Foreground(self.screen,self.level)
+        self.player=pygame.sprite.GroupSingle(Player(self.level))
         self.loop()
     
     def loop(self):
@@ -30,16 +35,25 @@ class Game:
                 if self.playing:
                     self.playing=False
                     break
+            if event.type==pygame.VIDEORESIZE:
+                self.screen=pygame.display.set_mode((self.info.current_w,self.info.current_h),pygame.FULLSCREEN)
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_ESCAPE:
                     self.playing=False
     
     def update(self):
-        self.controller.update()
+        self.player.sprite.weapon_sprite.update()
+        self.player.sprite.launch_effect.update()
+        self.player.sprite.balloons.update()
+        self.player.update()
     
     def draw(self):
-        self.screen.fill('white')
-        self.controller.draw()
+        self.background.draw()
+        self.player.sprite.weapon_sprite.draw(self.screen)
+        self.player.sprite.launch_effect.draw(self.screen)
+        self.player.sprite.balloons.draw(self.screen)
+        self.foreground.draw()
+        self.player.draw(self.screen)
 #%%
 game=Game()
 pygame.quit()

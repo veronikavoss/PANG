@@ -61,3 +61,19 @@ class Asset:
             self.player_images['launch'].append(launch)
         
         self.player_images['standby'].append(self.player_images['launch'][0])
+    
+    def get_balloons(self):
+        self.balloon_images={
+            'red':[],
+            'blue':[],
+            'green':[]
+        }
+        br_pos=[[1,6,48,40],[52,13,32,26],[86,19,16,14],[106,23,8,7]]
+        bb_pos=[[1,56,48,40],[52,63,32,26],[86,69,16,14],[106,73,8,7]]
+        bg_pos=[[1,105,48,40],[52,112,32,26],[86,118,16,14],[106,112,8,7]]
+        for br in br_pos:
+            r=pygame.Surface((br[2],br[3]))
+            r.blit(self.balloons_sheet,(0,0),br)
+            r.set_colorkey((128,64,0))
+            r=pygame.transform.scale(r,(br[2]*3,br[3]*3))
+            self.balloon_images['red'].append(r)

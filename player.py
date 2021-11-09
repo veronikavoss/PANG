@@ -2,11 +2,13 @@
 from setting import *
 from asset import Asset
 from weapon import *
+from balloon import Balloon
 #%%
 class Player(pygame.sprite.Sprite,Asset):
-    def __init__(self):
+    def __init__(self,level):
         pygame.sprite.Sprite.__init__(self)
         Asset.__init__(self)
+        self.level=level
         self.get_player()
         
         self.action='standby'
@@ -29,6 +31,7 @@ class Player(pygame.sprite.Sprite,Asset):
         
         self.weapon_sprite=pygame.sprite.Group()
         self.launch_effect=pygame.sprite.GroupSingle()
+        self.balloons=pygame.sprite.Group(Balloon(self.level,self.weapon_sprite))
     
     def key_input(self):
         self.rect.x+=self.dx
@@ -66,15 +69,13 @@ class Player(pygame.sprite.Sprite,Asset):
             self.weapon='vulcan_missile'
     
     def weapon_launch(self):
-        if self.weapon_type=='vulcan_missile':
-            self.weapon_sprite.add(Weapon(self.rect.midtop,self.weapon_type))
-            self.launched=True
-        else:
             self.weapon_sprite.add(Weapon(self.rect.midtop,self.weapon_type))
             self.launched=True
     
     def collision(self):
-        pass
+        for balloon in self.balloons:
+            if pygame.sprite.collide_mask(self,balloon):
+                print('c')
     
     def set_action(self):
         if not self.launched:
@@ -128,4 +129,3 @@ class Player(pygame.sprite.Sprite,Asset):
         self.set_weapon()
         self.animation()
         
-        print(self.k_space_pressed)
