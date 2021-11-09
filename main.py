@@ -19,7 +19,7 @@ class Game:
         self.levels=Level()
         self.background=Background(self.screen,self.levels.level)
         self.foreground=Foreground(self.screen,self.levels.level)
-        self.player=pygame.sprite.GroupSingle(Player(self.levels.level))
+        self.player=pygame.sprite.GroupSingle(Player())
         self.loop()
     
     def loop(self):

@@ -1,14 +1,15 @@
 #%%
 from setting import *
 from asset import Asset
+from level import Level
 from weapon import *
 from balloon import Balloon
 #%%
-class Player(pygame.sprite.Sprite,Asset):
-    def __init__(self,level):
+class Player(pygame.sprite.Sprite,Asset,Level):
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         Asset.__init__(self)
-        self.level=level
+        Level.__init__(self)
         self.get_player()
         
         self.action='standby'
@@ -31,7 +32,7 @@ class Player(pygame.sprite.Sprite,Asset):
         
         self.weapon_sprite=pygame.sprite.Group()
         self.launch_effect=pygame.sprite.GroupSingle()
-        self.balloons=pygame.sprite.Group(Balloon(self.level,self.weapon_sprite))
+        self.balloons=pygame.sprite.Group(Balloon(self.weapon_sprite))
     
     def key_input(self):
         self.rect.x+=self.dx

@@ -77,3 +77,15 @@ class Asset:
             r.set_colorkey((128,64,0))
             r=pygame.transform.scale(r,(br[2]*3,br[3]*3))
             self.balloon_images['red'].append(r)
+        for bb in bb_pos:
+            b=pygame.Surface((bb[2],bb[3]))
+            b.blit(self.balloons_sheet,(0,0),bb)
+            b.set_colorkey((128,64,0))
+            b=pygame.transform.scale(b,(bb[2]*3,bb[3]*3))
+            self.balloon_images['blue'].append(b)
+        for bg in bg_pos:
+            g=pygame.Surface((bg[2],bg[3]))
+            g.blit(self.balloons_sheet,(0,0),bg)
+            g.set_colorkey((128,64,0))
+            g=pygame.transform.scale(g,(bg[2]*3,bg[3]*3))
+            self.balloon_images['green'].append(g)

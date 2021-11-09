@@ -1,26 +1,34 @@
 #%%
 from setting import *
 from asset import Asset
+from level import Level
 #%%
-class Balloon(pygame.sprite.Sprite,Asset):
-    def __init__(self,level,weapons):
+class Balloon(pygame.sprite.Sprite,Asset,Level):
+    def __init__(self,weapons):
         pygame.sprite.Sprite.__init__(self)
         Asset.__init__(self)
-        self.level=level
+        Level.__init__(self)
         self.weapons=weapons
         self.get_balloons()
-        self.color='red'
-        self.index=0
-        self.image=self.balloon_images[self.color][self.index]
-        self.rect=self.image.get_rect(topleft=(80,60))
+        self.balloon_level()
+        
+        self.image=self.balloon_images[self.color][self.size]
+        self.rect=self.image.get_rect(topleft=self.pos)
         self.direction=pygame.math.Vector2(0,0)
         self.dx,self.dy=self.direction.x,self.direction.y
         self.speed_x=3
-        self.speed_y=-12
+        self.set_balloon_speed()
         self.gravity=0.18
     
-    def levels(self):
-        pass
+    def set_balloon_speed(self):
+        if self.size==0:
+            self.speed_y=-12
+        elif self.size==1:
+            self.speed_y=-9
+        elif self.size==2:
+            self.speed_y=-6
+        elif self.size==3:
+            self.speed_y=-3
     
     def set_movement(self):
         self.dx=self.speed_x
