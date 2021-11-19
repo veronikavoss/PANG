@@ -14,10 +14,9 @@ class Level:
         self.background_image=self.background_images[self.level-1]
         self.foreground_image=self.foreground_images[self.level-1]
         
-        self.start=False
         self.timer=0
         
-        self.status=2
+        self.status='ready'
         self.game_status_signal=self.game_status_signal[self.status]
         self.game_status_signal_rect=self.game_status_signal.get_rect(center=(stage_width//2,stage_height//2))
         self.status_animation=0
@@ -35,20 +34,12 @@ class Level:
             self.foreground_image=self.foreground_images[self.level-1]
             self.balloons.add(Balloon(self.asset,'blue',0,(120,100),True,False))
     
-    def next_level(self,player_die):
-        if not player_die:
-            if len(self.balloons)==0:
-                self.level+=1
-                self.levels()
-                self.start=True
-    
     def set_game_timer(self,playing_game):
         if playing_game:
             current_time=pygame.time.get_ticks()
             self.timer=str(self.time-((current_time-self.update_time)//1000))
     
-    def update(self,player_die,playing_game):
-        self.next_level(player_die)
+    def update(self,playing_game):
         self.set_game_timer(playing_game)
     
     def draw_text(self,playing_game,game_ready):

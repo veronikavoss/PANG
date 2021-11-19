@@ -47,7 +47,6 @@ class Game:
                     running=False
     
     def start(self):
-        # self.game_status_signal=pygame.sprite.GroupSingle(Game_Status_Signal(self.asset))
         self.levels.levels()
         self.balloons_popped_effect=pygame.sprite.Group()
         self.player=pygame.sprite.GroupSingle(Player(self.asset))
@@ -85,23 +84,25 @@ class Game:
         if self.game_ready_delay>=120:
             self.game_ready=False
             self.playing_game=True
-            self.levels.start=False
         if self.game_ready:
             self.status=2
     
     def collision(self):
         for weapon in self.player.sprite.weapon_sprite:
             for balloon in self.levels.balloons:
-                if pygame.sprite.collide_mask(weapon,balloon):
+                if pygame.sprite.collide_mask(weapon,balloon) and not self.player_die:
                     self.asset.balloon_popped_sound.play()
                     if balloon.size<3:
                         self.balloons_popped_effect.add(Balloons_Popped_Effect(self.asset,balloon.color,balloon.size,balloon.rect.center))
+                        self.items.add(Item_and_Food(self.asset,balloon.rect.center))
                         balloon.kill()
                         self.levels.balloons.add(Balloon(self.asset,balloon.color,balloon.size+1,balloon.rect.center,True,True))
                         self.levels.balloons.add(Balloon(self.asset,balloon.color,balloon.size+1,balloon.rect.center,False,True))
                     else:
                         self.balloons_popped_effect.add(Balloons_Popped_Effect(self.asset,balloon.color,balloon.size,balloon.rect.center))
                         balloon.kill()
+                        if len(self.levels.balloons)==0:
+                            self.next_level()
                     weapon.kill()
         
         for player in self.player:
@@ -118,14 +119,15 @@ class Game:
                     self.player.sprite.action='die'
     
     def next_level(self):
-        if self.levels.start:
-            self.player=pygame.sprite.GroupSingle(Player(self.asset))  
-            self.game_ready=True
-            self.game_ready_delay=0
-            self.playing_game=False
-            self.game_over_screen=False
-            self.player_die=False
-            self.player_die_delay=0
+        self.levels.level+=1
+        self.levels.levels()
+        self.player=pygame.sprite.GroupSingle(Player(self.asset))  
+        self.game_ready=True
+        self.game_ready_delay=0
+        self.playing_game=False
+        self.game_over_screen=False
+        self.player_die=False
+        self.player_die_delay=0
     
     def restart(self):
         if self.player_die:
@@ -136,15 +138,15 @@ class Game:
     def update(self):
         self.set_status()
         if self.playing_game:
-            self.levels.update(self.player_die,self.playing_game)
+            self.levels.update(self.playing_game)
             self.player.sprite.weapon_sprite.update()
             self.player.sprite.launch_effect.update()
             self.levels.balloons.update()
             self.balloons_popped_effect.update()
+            self.items.update()
             self.player.update(self.playing_game)
             
             self.collision()
-            self.next_level()
             self.restart()
     
     def draw(self):

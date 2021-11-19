@@ -22,10 +22,12 @@ class Asset:
         self.get_player()
         self.get_balloons()
         self.get_balloons_popped()
+        self.get_items()
         self.get_sound()
         self.get_font()
     
     def ui(self):
+        # title
         self.PANG=[]
         for i in range(1,5):
             pang=pygame.image.load(os.path.join(image_path,f'ui/PANG_{i}.png')).convert_alpha()
@@ -36,13 +38,20 @@ class Asset:
         self.pang_logo=pygame.image.load(os.path.join(image_path,'ui/PangTitleCard.png')).convert_alpha()
         self.pang_logo=pygame.transform.scale(self.pang_logo,(screen_width,screen_height))
         
-        self.game_status_signal=[]
-        game_status_signal=[[5,5,533,59],[5,69,533,59],[5,132,204,68]]
-        for status in game_status_signal:
+        # game_status_signal
+        game_status_signal=[]
+        game_status_signal_pos=[[5,5,533,59],[5,69,533,59],[5,132,204,68]]
+        for status in game_status_signal_pos:
             surface=pygame.Surface((status[2],status[3]))
             surface.blit(self.game_status_signal_sheet,(0,0),status)
             surface.set_colorkey((0,0,0))
-            self.game_status_signal.append(surface)
+            game_status_signal.append(surface)
+        
+        self.game_status_signal={
+            'ready':game_status_signal[2],
+            'time_over':game_status_signal[1],
+            'game_over':game_status_signal[0]
+        }
     
     def get_background(self):
         self.background_images=[]
@@ -123,7 +132,8 @@ class Asset:
             'move_y':[],
             'launch':[],
             'standby':[],
-            'die':[]
+            'die':[],
+            'shield':[]
         }
         for column in range(5):
             mx=pygame.Surface((32,32))
@@ -149,13 +159,21 @@ class Asset:
         
         self.player_images['standby'].append(self.player_images['launch'][0])
         
-        die_list=[147,80,32,30],[81,112,41,30]
+        die_list=[[147,80,32,30],[81,112,41,30]]
         for die in die_list:
             surface=pygame.Surface((die[2],die[3]))
             surface.blit(self.player_sheet,(0,0),die)
             surface.set_colorkey((0,255,0))
             surface=pygame.transform.scale(surface,(die[2]*3,die[3]*3))
             self.player_images['die'].append(surface)
+        
+        shield_list=[[64,404,32,39],[104,404,32,39]]
+        for shield in shield_list:
+            surface=pygame.Surface((shield[2],shield[3]))
+            surface.blit(self.player_sheet,shield)
+            surface.set_colorkey((0,255,0))
+            surface=pygame.transform.scale(surface,(shield[2]*3,shield[3]*3))
+            self.player_images['shield'].append(surface)
     
     def get_balloons(self):
         self.balloon_images={
@@ -284,6 +302,31 @@ class Asset:
             bpg.set_colorkey((0,0,0))
             bpg=pygame.transform.scale(bpg,(effect[2]*3,effect[3]*3))
             self.balloons_popped_images['green']['size4'].append(bpg)
+    
+    def get_items(self):
+        weapon_items_pos=[[8,62,15,16],[47,62,15,16],[86,65,16,13]]
+        clock_items_pos=[[8,102,16,16],[48,102,16,16]]
+        dynamite_items_pos=[[88,102,16,16],[111,102,16,16],[135,102,16,16]]
+        bonus_items_pos=[[8,142,16,16],[48,142,16,16],[72,142,16,16],[96,142,16,16],[120,142,16,16]]
+        shield_items_pos=[[5,366,16,14],[25,366,16,14],[48,366,16,14],[72,366,16,14],[96,366,16,14],[120,366,16,14],[144,366,16,14],[167,366,16,14]]
+        items_pos_list=[weapon_items_pos,clock_items_pos,dynamite_items_pos,bonus_items_pos,shield_items_pos]
+        item_surface_temp=[]
+        for i in range(5):
+            for item in items_pos_list[i]:
+                surface=pygame.Surface((item[2],item[3]))
+                surface.blit(self.items_weapons_sheet,(0,0),item)
+                surface.set_colorkey((103,150,86))
+                surface=pygame.transform.scale(surface,(item[2]*3,item[3]*3))
+                item_surface_temp.append(surface)
+        
+        self.items_images={
+            'weapon_items':{'power_wire':item_surface_temp[0],'double_wire':item_surface_temp[1],'vulcan_missile':item_surface_temp[2]},
+            # 'weapon_items':item_surface_temp[0:3],
+            'clock_items':{'stop':item_surface_temp[3],'slow':item_surface_temp[4]},
+            'dynamite_items':item_surface_temp[5:7],
+            'bonus_items':{'bonus':item_surface_temp[8],'robot':item_surface_temp[9:12]},
+            'shield_items':item_surface_temp[13:20]
+        }
     
     def get_sound(self):
         self.start_screen_balloon_popped_sound=pygame.mixer.Sound(os.path.join(sound_path,'SFX/titleScreenAnimationSound_fix.wav'))
