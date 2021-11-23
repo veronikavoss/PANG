@@ -11,7 +11,8 @@ class Player(pygame.sprite.Sprite):
         self.player_images=self.asset.player_images
         
         self.action='standby'
-        self.weapon='single_wire' # single_wire,double_wire,power_wire,vulcan_missile
+        self.weapon='single_wire' # single_wire,double_wire,double_power_wire,power_wire,vulcan_missile
+        self.previous_weapon=''
         self.weapon_type='normal' # normal,power_wire,vulcan_missile
         self.index=0
         self.animation_speed=0.1
@@ -25,8 +26,6 @@ class Player(pygame.sprite.Sprite):
         self.gravity=0.8
         
         self.flip=False
-        self.Ready_for_Launch=True
-        self.vulcan_missile_Ready_for_Launch=True
         self.launched=False
         self.launch_key_pressed=False
         self.die_jump=False
@@ -56,14 +55,9 @@ class Player(pygame.sprite.Sprite):
                 self.dx=0
             
             if key_input[pygame.K_SPACE]:
-                if self.Ready_for_Launch and not self.launch_key_pressed:
+                if not self.launch_key_pressed:
                     self.weapon_launch()
-                    self.launch_effect.add(Launch_Effect(self.asset,self.rect.midtop))
                     self.launch_key_pressed=True
-                    if self.weapon_type=='normal' or self.weapon_type=='power_wire':
-                        self.asset.normal_launch_sound.play()
-                    elif self.weapon_type=='vulcan_missile':
-                        self.asset.vulcan_missile_launch_sound.play()
             else:
                 self.launch_key_pressed=False
             
@@ -72,7 +66,11 @@ class Player(pygame.sprite.Sprite):
             elif key_input[pygame.K_d]:
                 self.weapon='double_wire'
             elif key_input[pygame.K_p]:
-                self.weapon='power_wire'
+                self.previous_weapon=self.weapon
+                if self.previous_weapon=='double_wire':
+                    self.weapon='double_power_wire'
+                else:
+                    self.weapon='power_wire'
             elif key_input[pygame.K_v]:
                 self.weapon='vulcan_missile'
     
@@ -97,27 +95,31 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom>=stage_bottom:
             self.rect.bottom=stage_bottom
     
-    def set_weapon(self):
+    def set_weapon_type(self):
         if self.weapon=='single_wire' or self.weapon=='double_wire':
             self.weapon_type='normal'
-        elif self.weapon=='power_wire':
+        elif self.weapon=='power_wire' or self.weapon=='double_power_wire':
             self.weapon_type='power_wire'
         elif self.weapon=='vulcan_missile':
             self.weapon_type='vulcan_missile'
-        
-        if self.weapon=='single_wire' or self.weapon=='power_wire':
-            if len(self.weapon_sprite)==0:
-                self.Ready_for_Launch=True
-            else:
-                self.Ready_for_Launch=False
-        elif self.weapon=='double_wire':
-            if len(self.weapon_sprite)>=2:
-                self.Ready_for_Launch=False
-            else:
-                self.Ready_for_Launch=True
     
     def weapon_launch(self):
+        if self.weapon=='single_wire' or self.weapon=='power_wire':
+            if len(self.weapon_sprite)==0:
+                self.weapon_sprite.add(Weapon(self.asset,self.rect.midtop,self.weapon_type))
+                self.launch_effect.add(Launch_Effect(self.asset,self.rect.midtop))
+                self.asset.normal_launch_sound.play()
+                self.launched=True
+        elif self.weapon=='double_wire' or self.weapon=='double_power_wire':
+            if len(self.weapon_sprite)<2:
+                self.weapon_sprite.add(Weapon(self.asset,self.rect.midtop,self.weapon_type))
+                self.launch_effect.add(Launch_Effect(self.asset,self.rect.midtop))
+                self.asset.normal_launch_sound.play()
+                self.launched=True
+        else:
             self.weapon_sprite.add(Weapon(self.asset,self.rect.midtop,self.weapon_type))
+            self.launch_effect.add(Launch_Effect(self.asset,self.rect.midtop))
+            self.asset.vulcan_missile_launch_sound.play()
             self.launched=True
     
     def set_action(self):
@@ -154,7 +156,7 @@ class Player(pygame.sprite.Sprite):
         self.key_input(playing_game)
         self.set_gravity()
         self.set_action()
-        self.set_weapon()
+        self.set_weapon_type()
         self.animation()
-        print(self.playing_game)
-#%%
+        
+        print(self.weapon,self.previous_weapon)

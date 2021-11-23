@@ -1,4 +1,5 @@
 #%%
+from random import randint
 from setting import *
 from asset import Asset
 from start_screen import Start_Screen
@@ -94,7 +95,9 @@ class Game:
                     self.asset.balloon_popped_sound.play()
                     if balloon.size<3:
                         self.balloons_popped_effect.add(Balloons_Popped_Effect(self.asset,balloon.color,balloon.size,balloon.rect.center))
-                        self.items.add(Item_and_Food(self.asset,balloon.rect.center))
+                        item_probability=randint(1,2)
+                        if item_probability==1:
+                            self.items.add(Item_and_Food(self.asset,balloon.rect.center))
                         balloon.kill()
                         self.levels.balloons.add(Balloon(self.asset,balloon.color,balloon.size+1,balloon.rect.center,True,True))
                         self.levels.balloons.add(Balloon(self.asset,balloon.color,balloon.size+1,balloon.rect.center,False,True))
@@ -117,11 +120,32 @@ class Game:
                         self.asset.dead_sound.play()
                     self.player_die=True
                     self.player.sprite.action='die'
+            for item in self.items:
+                if pygame.sprite.collide_mask(player,item):
+                    if item.item_type=='weapon_items':
+                        self.player.sprite.previous_weapon=self.player.sprite.weapon
+                        if item.item=='power_wire':
+                            if self.player.sprite.previous_weapon=='double_wire':
+                                self.player.sprite.weapon='double_power_wire'
+                            else:
+                                self.player.sprite.weapon='power_wire'
+                        else:
+                            self.player.sprite.weapon=item.item
+                    if item.item_type=='clock_items':
+                        if item.item=='slow':
+                            print('slow')
+                        if item.item=='stop':
+                            print('stop')
+                    # print(item,item.item,self.levels.balloon.slow,bl)
+                    item.kill()
+        
+        for bl in self.levels.balloons.sprites():
+            bl.stop=True
     
     def next_level(self):
         self.levels.level+=1
         self.levels.levels()
-        self.player=pygame.sprite.GroupSingle(Player(self.asset))  
+        self.player=pygame.sprite.GroupSingle(Player(self.asset))
         self.game_ready=True
         self.game_ready_delay=0
         self.playing_game=False
@@ -161,8 +185,6 @@ class Game:
         self.items.draw(self.screen)
         self.levels.draw_text(self.playing_game,self.game_ready)
         self.levels.draw_status(self.game_ready)
-        
-        print(self.game_ready_delay)
         if self.game_over_screen:
             pass
             # for r in range(26):

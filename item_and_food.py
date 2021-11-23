@@ -6,66 +6,89 @@ class Item_and_Food(pygame.sprite.Sprite):
     def __init__(self,asset,center):
         pygame.sprite.Sprite.__init__(self)
         self.asset=asset
-        self.items_images=self.asset.items_images
-        self.weapon_power_wire_items=self.items_images['weapon_items']['power_wire']
-        self.weapon_double_wire_items=self.items_images['weapon_items']['double_wire']
-        self.weapon_vulcan_missile_items=self.items_images['weapon_items']['vulcan_missile']
-        self.clock_stop_items=self.items_images['clock_items']['stop']
-        self.clock_slow_items=self.items_images['clock_items']['slow']
-        self.dynamite_items=self.items_images['dynamite_items'][0]
-        self.bonus_items=self.items_images['bonus_items']['bonus']
-        self.shield_items=self.items_images['shield_items'][0]
-        self.items=[
-            self.weapon_power_wire_items,
-            self.weapon_double_wire_items,
-            self.weapon_vulcan_missile_items,
-            self.clock_stop_items,
-            self.clock_slow_items,
-            self.dynamite_items,
-            self.bonus_items,
-            self.shield_items
-            ]
-        self.item=choice(self.items)
         self.animation_index=0
-        self.image=self.item
+        self.item_type=''
+        self.item=''
+        self.get_item_images()
+        self.set_items()
+        self.image=self.item_image
         self.rect=self.image.get_rect(center=center)
-        
+    
+    def get_item_images(self):
+        self.items_images=self.asset.items_images
+        self.weapon_power_wire_item=self.items_images['weapon_items']['power_wire']
+        self.weapon_double_wire_item=self.items_images['weapon_items']['double_wire']
+        self.weapon_vulcan_missile_item=self.items_images['weapon_items']['vulcan_missile']
+        self.clock_stop_item=self.items_images['clock_items']['stop']
+        self.clock_slow_item=self.items_images['clock_items']['slow']
+        self.dynamite_item=self.items_images['dynamite_item'][self.animation_index]
+        self.shield_item=self.items_images['shield_item'][self.animation_index]
+        self.bonus_item=self.items_images['bonus_items']['bonus']
+    
+    def set_items(self):
+        self.items=[
+            self.weapon_power_wire_item,
+            self.weapon_double_wire_item,
+            self.weapon_vulcan_missile_item,
+            self.clock_stop_item,
+            self.clock_slow_item,
+            self.dynamite_item,
+            self.shield_item,
+            # self.bonus_items
+            ]
+        self.item_image=choice(self.items)
+        if self.item_image==self.weapon_power_wire_item:
+            self.item_type='weapon_items'
+            self.item='power_wire'
+        elif self.item_image==self.weapon_double_wire_item:
+            self.item_type='weapon_items'
+            self.item='double_wire'
+        elif self.item_image==self.weapon_vulcan_missile_item:
+            self.item_type='weapon_items'
+            self.item='vulcan_missile'
+        elif self.item_image==self.clock_stop_item:
+            self.item_type='clock_items'
+            self.item='stop'
+        elif self.item_image==self.clock_slow_item:
+            self.item_type='clock_items'
+            self.item='slow'
+        elif self.item_image==self.dynamite_item:
+            self.item='dynamite'
+            self.item_type='dynamite_item'
+        elif self.item_image==self.shield_item:
+            self.item='shield'
+            self.item_type='shield_item'
+        elif self.item_image==self.bonus_item:
+            self.item='bonus'
+            self.item_type='bonus_items'
+    
+    def apply_items(self,weapon):
+        if self.item=='power_wire':
+            weapon=self.item
+        elif self.item=='double_wire':
+            weapon=self.item
+        elif self.item=='vulcan_missile':
+            weapon=self.item
     
     def animation(self):
-        if self.item==self.dynamite_items or self.item==self.shield_items:
-            if self.item==self.dynamite_items:
+        self.rect.y+=5
+        if self.rect.bottom>=stage_bottom:
+            self.rect.bottom=stage_bottom
+        
+        if self.item_image==self.dynamite_item or self.item_image==self.shield_item:
+            if self.item_image==self.dynamite_item:
                 self.animation_index+=0.1
-                item=self.items_images['dynamite_items']
+                item=self.items_images['dynamite_item']
                 if self.animation_index>=len(item):
                     self.animation_index=0
-            elif self.item==self.shield_items:
+            elif self.item_image==self.shield_item:
                 self.animation_index+=0.1
-                item=self.items_images['shield_items']
+                item=self.items_images['shield_item']
                 if self.animation_index>=len(item):
                     self.animation_index=0
             self.image=item[int(self.animation_index)]
         else:
-            self.image=self.item
+            self.image=self.item_image
     
     def update(self):
-        self.rect.y+=5
-        if self.rect.bottom>=stage_bottom:
-            self.rect.bottom=stage_bottom
         self.animation()
-        print(self.rect.centery)
-#%%
-# import pygame
-# weapon_items_pos=[[8,62,15,16],[47,62,15,16],[86,65,16,13]]
-# clock_items_pos=[[8,102,16,16],[48,102,16,16]]
-# dynamite_items_pos=[[88,105,15,13],[111,102,16,16],[135,102,16,16]]
-# bonus_items_pos=[[8,142,16,16],[48,142,16,16],[72,142,16,16],[96,142,16,16],[120,142,16,16]]
-# shield_items_pos=[[8,372,10,8],[26,368,14,12],[48,366,16,14],[72,366,16,14],[96,366,16,14],[120,366,16,14],[144,366,16,14],[168,368,14,12]]
-# items_pos_list=[weapon_items_pos,clock_items_pos,dynamite_items_pos,bonus_items_pos,shield_items_pos]
-# item_surface_temp=[]
-# for i in range(5):
-#     for item in items_pos_list[i]:
-#         surface=pygame.Surface((item[2],item[3]))
-#         item_surface_temp.append(surface)
-# #%%
-# print(item_surface_temp[0])
-# #%%

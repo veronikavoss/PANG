@@ -2,7 +2,7 @@
 from setting import *
 #%%
 class Balloon(pygame.sprite.Sprite):
-    def __init__(self,asset,color,size,pos,flip,pop,index=0,speed=3):
+    def __init__(self,asset,color,size,pos,flip,pop,index=0,speed=3,slow=False,stop=False):
         pygame.sprite.Sprite.__init__(self)
         self.balloon_images=asset.balloon_images
         self.color=color
@@ -11,31 +11,54 @@ class Balloon(pygame.sprite.Sprite):
         self.flip=flip
         self.pop=pop
         self.index=index
+        self.speed=speed
+        self.slow=slow
+        self.stop=stop
         
         self.image=self.balloon_images[self.color][self.size]
         self.rect=self.image.get_rect(center=self.pos)
         self.direction=pygame.math.Vector2(0,0)
         self.dx,self.dy=self.direction.x,self.direction.y
-        self.set_balloon_speed(speed)
+        self.set_balloon_speed()
         self.gravity=0.18
     
-    def set_balloon_speed(self,speed):
+    def set_balloon_speed(self):
         if self.flip:
-            self.speed_x=speed
+            self.speed_x=self.speed
         else:
-            self.speed_x=-speed
+            self.speed_x=-self.speed
         
         if self.pop:
             self.dy=-3
         
-        if self.size==0:
-            self.speed_y=-12
-        elif self.size==1:
-            self.speed_y=-10
-        elif self.size==2:
-            self.speed_y=-8
-        elif self.size==3:
-            self.speed_y=-6
+        if self.slow:
+            if self.size==0:
+                self.speed_y=-8
+            elif self.size==1:
+                self.speed_y=-6
+            elif self.size==2:
+                self.speed_y=-4
+            elif self.size==3:
+                self.speed_y=-2
+        elif self.stop:
+            self.speed_x=0
+            if self.size==0:
+                self.speed_y=0
+            elif self.size==1:
+                self.speed_y=-0
+            elif self.size==2:
+                self.speed_y=-0
+            elif self.size==3:
+                self.speed_y=0
+        else:
+            if self.size==0:
+                self.speed_y=-12
+            elif self.size==1:
+                self.speed_y=-10
+            elif self.size==2:
+                self.speed_y=-8
+            elif self.size==3:
+                self.speed_y=-6
     
     def set_movement(self):
         self.dx=self.speed_x

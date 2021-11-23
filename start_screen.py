@@ -75,4 +75,3 @@ class Start_Screen:
             self.asset.pang_logo.set_colorkey((17,17,17))
             self.screen.blit(self.asset.pang_logo,(0,0))
             self.text()
-        print(self.timer)

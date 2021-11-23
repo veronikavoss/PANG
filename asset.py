@@ -323,9 +323,9 @@ class Asset:
             'weapon_items':{'power_wire':item_surface_temp[0],'double_wire':item_surface_temp[1],'vulcan_missile':item_surface_temp[2]},
             # 'weapon_items':item_surface_temp[0:3],
             'clock_items':{'stop':item_surface_temp[3],'slow':item_surface_temp[4]},
-            'dynamite_items':item_surface_temp[5:7],
+            'dynamite_item':item_surface_temp[5:7],
             'bonus_items':{'bonus':item_surface_temp[8],'robot':item_surface_temp[9:12]},
-            'shield_items':item_surface_temp[13:20]
+            'shield_item':item_surface_temp[13:20]
         }
     
     def get_sound(self):
