@@ -6,6 +6,7 @@ class Asset:
         self.background_sheet=pygame.image.load(os.path.join(image_path,'Backgrounds.png')).convert_alpha()
         self.foreground_sheet=pygame.image.load(os.path.join(image_path,'Foreground.png')).convert_alpha()
         self.player_sheet=pygame.image.load(os.path.join(image_path,'player.png')).convert_alpha()
+        self.crash_shield_sheet=pygame.image.load(os.path.join(image_path,'shield_crash.png')).convert_alpha()
         self.items_weapons_sheet=pygame.image.load(os.path.join(image_path,'Items & Weapons.png')).convert_alpha()
         self.balloons_sheet=pygame.image.load(os.path.join(image_path,'Balloons.png')).convert_alpha()
         self.balloon_popped_red_sheet=pygame.image.load(os.path.join(image_path,'balloon_popped_red.png')).convert_alpha()
@@ -170,9 +171,15 @@ class Asset:
         shield_list=[[64,404,32,39],[104,404,32,39]]
         for shield in shield_list:
             surface=pygame.Surface((shield[2],shield[3]))
-            surface.blit(self.player_sheet,shield)
-            surface.set_colorkey((0,255,0))
+            surface.blit(self.items_weapons_sheet,(0,0),shield)
+            surface.set_colorkey((103,150,86))
             surface=pygame.transform.scale(surface,(shield[2]*3,shield[3]*3))
+            self.player_images['shield'].append(surface)
+        for i in range(2):
+            surface=pygame.Surface((32,39))
+            surface.blit(self.crash_shield_sheet,(0,0),(i*40,0,32,39))
+            surface.set_colorkey((0,0,0))
+            surface=pygame.transform.scale(surface,(32*3,39*3))
             self.player_images['shield'].append(surface)
     
     def get_balloons(self):

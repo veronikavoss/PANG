@@ -31,34 +31,14 @@ class Balloon(pygame.sprite.Sprite):
         if self.pop:
             self.dy=-3
         
-        if self.slow:
-            if self.size==0:
-                self.speed_y=-8
-            elif self.size==1:
-                self.speed_y=-6
-            elif self.size==2:
-                self.speed_y=-4
-            elif self.size==3:
-                self.speed_y=-2
-        elif self.stop:
-            self.speed_x=0
-            if self.size==0:
-                self.speed_y=0
-            elif self.size==1:
-                self.speed_y=-0
-            elif self.size==2:
-                self.speed_y=-0
-            elif self.size==3:
-                self.speed_y=0
-        else:
-            if self.size==0:
-                self.speed_y=-12
-            elif self.size==1:
-                self.speed_y=-10
-            elif self.size==2:
-                self.speed_y=-8
-            elif self.size==3:
-                self.speed_y=-6
+        if self.size==0:
+            self.speed_y=-12
+        elif self.size==1:
+            self.speed_y=-10
+        elif self.size==2:
+            self.speed_y=-8
+        elif self.size==3:
+            self.speed_y=-6
     
     def set_movement(self):
         self.dx=self.speed_x

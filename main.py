@@ -50,7 +50,7 @@ class Game:
     def start(self):
         self.levels.levels()
         self.balloons_popped_effect=pygame.sprite.Group()
-        self.player=pygame.sprite.GroupSingle(Player(self.asset))
+        self.player=pygame.sprite.GroupSingle(Player(self.screen,self.asset))
         self.items=pygame.sprite.Group()
         
         self.game_ready=True
@@ -89,6 +89,8 @@ class Game:
             self.status=2
     
     def collision(self):
+        global FPS
+        
         for weapon in self.player.sprite.weapon_sprite:
             for balloon in self.levels.balloons:
                 if pygame.sprite.collide_mask(weapon,balloon) and not self.player_die:
@@ -107,19 +109,22 @@ class Game:
                         if len(self.levels.balloons)==0:
                             self.next_level()
                     weapon.kill()
-        
         for player in self.player:
             for balloon in self.levels.balloons:
                 if pygame.sprite.collide_mask(player,balloon):
-                    if not self.player_die:
-                        pygame.time.delay(500)
-                        if balloon.rect.centerx<player.rect.centerx:
-                            self.player.sprite.hit_pos=True
-                        else:
-                            self.player.sprite.hit_pos=False
-                        self.asset.dead_sound.play()
-                    self.player_die=True
-                    self.player.sprite.action='die'
+                    if self.player.sprite.shield:
+                        self.player.sprite.shield_crash=True
+                    else:
+                        if not self.player_die:
+                            pygame.time.delay(500)
+                            if balloon.rect.centerx<player.rect.centerx:
+                                self.player.sprite.hit_pos=True
+                            else:
+                                self.player.sprite.hit_pos=False
+                            self.asset.dead_sound.play()
+                        self.player_die=True
+                        self.player.sprite.action='die'
+            
             for item in self.items:
                 if pygame.sprite.collide_mask(player,item):
                     if item.item_type=='weapon_items':
@@ -131,21 +136,25 @@ class Game:
                                 self.player.sprite.weapon='power_wire'
                         else:
                             self.player.sprite.weapon=item.item
+                    
                     if item.item_type=='clock_items':
                         if item.item=='slow':
                             print('slow')
+                            # FPS=30
                         if item.item=='stop':
                             print('stop')
-                    # print(item,item.item,self.levels.balloon.slow,bl)
+                    
+                    if item.item_type=='shield_item':
+                        self.player.sprite.shield=True
+                    
                     item.kill()
-        
-        for bl in self.levels.balloons.sprites():
-            bl.stop=True
     
     def next_level(self):
+        self.balloons_popped_effect.empty()
         self.levels.level+=1
         self.levels.levels()
-        self.player=pygame.sprite.GroupSingle(Player(self.asset))
+        self.player=pygame.sprite.GroupSingle(Player(self.screen,self.asset))
+        self.items.empty()
         self.game_ready=True
         self.game_ready_delay=0
         self.playing_game=False
@@ -181,6 +190,7 @@ class Game:
         self.levels.balloons.draw(self.screen)
         self.balloons_popped_effect.draw(self.screen)
         self.levels.draw_foreground()
+        self.player.sprite.draw_shield()
         self.player.draw(self.screen)
         self.items.draw(self.screen)
         self.levels.draw_text(self.playing_game,self.game_ready)
