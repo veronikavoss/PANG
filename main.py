@@ -59,11 +59,12 @@ class Game:
         self.game_over_screen=False
         self.player_die=False
         self.player_die_delay=0
+        self.shield_animation=0
         self.loop()
     
     def loop(self):
         while self.running:
-            self.clock.tick(FPS)
+            self.mt=self.clock.tick(FPS)/1000
             self.events()
             self.update()
             self.draw()
@@ -182,6 +183,20 @@ class Game:
             self.collision()
             self.restart()
     
+    def draw_player(self):
+        if self.player.sprite.shield_crash:
+            self.shield_animation+=self.mt*10
+            current_time=int(self.shield_animation)
+            if current_time%2==0:
+                self.player.sprite.draw_shield()
+                self.player.draw(self.screen)
+            if current_time==30:
+                self.player.sprite.shield=False
+                self.player.sprite.shield_crash=False
+        else:
+            self.player.sprite.draw_shield()
+            self.player.draw(self.screen)
+    
     def draw(self):
         self.levels.draw_background()
         self.player.sprite.weapon_sprite.draw(self.screen)
@@ -190,8 +205,7 @@ class Game:
         self.levels.balloons.draw(self.screen)
         self.balloons_popped_effect.draw(self.screen)
         self.levels.draw_foreground()
-        self.player.sprite.draw_shield()
-        self.player.draw(self.screen)
+        self.draw_player()
         self.items.draw(self.screen)
         self.levels.draw_text(self.playing_game,self.game_ready)
         self.levels.draw_status(self.game_ready)

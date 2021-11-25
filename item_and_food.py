@@ -92,3 +92,4 @@ class Item_and_Food(pygame.sprite.Sprite):
     
     def update(self):
         self.animation()
+#%%

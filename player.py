@@ -33,7 +33,7 @@ class Player(pygame.sprite.Sprite):
         self.hit_pos=True
         self.playing_game=False
         
-        self.shield=True
+        self.shield=False
         self.shield_index=0
         self.shield_crash=False
         self.shield_crash_delay=0
@@ -186,10 +186,8 @@ class Player(pygame.sprite.Sprite):
                 self.shield_image=pygame.transform.flip(self.shield_image,True,False)
                 self.shield_rect=self.shield_image.get_rect(center=(self.rect.centerx+5,self.rect.centery))
             
-            if self.shield_crash_delay<=30:
+            if self.shield_crash_delay<=20:
                 self.screen.blit(self.shield_image,self.shield_rect)
-            else:
-                self.shield_crash=False
     
     def update(self,playing_game):
         self.key_input(playing_game)
