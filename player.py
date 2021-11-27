@@ -37,6 +37,7 @@ class Player(pygame.sprite.Sprite):
         self.shield_index=0
         self.shield_crash=False
         self.shield_crash_delay=0
+        self.shield_animation_index=0
         
         self.weapon_sprite=pygame.sprite.Group()
         self.launch_effect=pygame.sprite.GroupSingle()
@@ -68,7 +69,7 @@ class Player(pygame.sprite.Sprite):
                 self.launch_key_pressed=False
             
             if key_input[pygame.K_s]:
-                self.weapon='single_wire'
+                self.shield=True
             elif key_input[pygame.K_d]:
                 self.weapon='double_wire'
             elif key_input[pygame.K_p]:
@@ -158,7 +159,7 @@ class Player(pygame.sprite.Sprite):
         else:
             self.image=pygame.transform.flip(self.image,False,False)
     
-    def draw_shield(self):
+    def draw_shield(self,mt):
         shield_image=self.player_images['shield']
         
         if self.shield and not self.shield_crash:
@@ -188,6 +189,19 @@ class Player(pygame.sprite.Sprite):
             
             if self.shield_crash_delay<=20:
                 self.screen.blit(self.shield_image,self.shield_rect)
+            
+            self.shield_animation_index+=mt*0.1
+            current_time=int(self.shield_animation_index)
+            if current_time%2==0:
+                self.image.set_alpha(255)
+            else:
+                self.image.set_alpha(0)
+            
+            if current_time>=20:
+                current_time=0
+                self.shield=False
+                self.shield_crash=False
+            # print(current_time,self.shield,self.shield_crash)
     
     def update(self,playing_game):
         self.key_input(playing_game)

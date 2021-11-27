@@ -19,7 +19,7 @@ class Level:
         self.status='ready'
         self.game_status_signal=self.game_status_signal[self.status]
         self.game_status_signal_rect=self.game_status_signal.get_rect(center=(stage_width//2,stage_height//2))
-        self.status_animation=0
+        self.game_status_timer=0
     
     def levels(self):
         self.balloons=pygame.sprite.Group()
@@ -37,6 +37,7 @@ class Level:
     
     def set_game_timer(self,playing_game):
         if playing_game:
+            self.game_status_timer=0
             current_time=pygame.time.get_ticks()
             self.timer=str(self.time-((current_time-self.update_time)//1000))
     
@@ -59,15 +60,13 @@ class Level:
     def draw_foreground(self):
         self.screen.blit(self.foreground_image,(0,0))
     
-    def draw_status(self,game_ready):
+    def draw_status(self,game_ready,mt,ms):
         if game_ready:
-            self.status_animation+=1
-            if self.status_animation<60 or self.status_animation>70:
-                self.screen.blit(self.game_status_signal,self.game_status_signal_rect)
-            elif self.status_animation>60:
-                pass
-            if self.status_animation>=80:
-                self.status_animation=60
+            self.game_status_signal.set_alpha(255)
+            self.game_status_timer+=mt
+            if self.game_status_timer>=60:
+                self.game_status_signal.set_alpha(ms)
+            self.screen.blit(self.game_status_signal,self.game_status_signal_rect)
     
     def level_data(self):
         self.data=[

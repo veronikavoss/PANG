@@ -1,6 +1,7 @@
 #%%
 from setting import *
 from random import *
+from math import sin
 #%%
 class Item_and_Food(pygame.sprite.Sprite):
     def __init__(self,asset,center):
@@ -13,6 +14,7 @@ class Item_and_Food(pygame.sprite.Sprite):
         self.set_items()
         self.image=self.item_image
         self.rect=self.image.get_rect(center=center)
+        self.update_timer=pygame.time.get_ticks()
     
     def get_item_images(self):
         self.items_images=self.asset.items_images
@@ -62,18 +64,15 @@ class Item_and_Food(pygame.sprite.Sprite):
             self.item='bonus'
             self.item_type='bonus_items'
     
-    def apply_items(self,weapon):
-        if self.item=='power_wire':
-            weapon=self.item
-        elif self.item=='double_wire':
-            weapon=self.item
-        elif self.item=='vulcan_missile':
-            weapon=self.item
-    
-    def animation(self):
+    def animation(self,ms):
+        current_time=pygame.time.get_ticks()
         self.rect.y+=5
         if self.rect.bottom>=stage_bottom:
             self.rect.bottom=stage_bottom
+            if current_time-self.update_timer>=5000:
+                self.image.set_alpha(ms)
+            if current_time-self.update_timer>=7000:
+                self.kill()
         
         if self.item_image==self.dynamite_item or self.item_image==self.shield_item:
             if self.item_image==self.dynamite_item:
@@ -90,6 +89,6 @@ class Item_and_Food(pygame.sprite.Sprite):
         else:
             self.image=self.item_image
     
-    def update(self):
-        self.animation()
+    def update(self,ms):
+        self.animation(ms)
 #%%

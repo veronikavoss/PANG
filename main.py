@@ -59,12 +59,11 @@ class Game:
         self.game_over_screen=False
         self.player_die=False
         self.player_die_delay=0
-        self.shield_animation=0
         self.loop()
     
     def loop(self):
         while self.running:
-            self.mt=self.clock.tick(FPS)/1000
+            self.mt=self.clock.tick(FPS)//15
             self.events()
             self.update()
             self.draw()
@@ -82,8 +81,8 @@ class Game:
     
     def set_status(self):
         if self.game_ready:
-            self.game_ready_delay+=1
-        if self.game_ready_delay>=120:
+            self.game_ready_delay+=self.mt*1
+        if self.game_ready_delay>=self.mt*120:
             self.game_ready=False
             self.playing_game=True
         if self.game_ready:
@@ -150,6 +149,13 @@ class Game:
                     
                     item.kill()
     
+    def wave_alpha_value(self,value=100):
+        current_time=pygame.time.get_ticks()//value # default 0.1s
+        if current_time%2==0:
+            return 255
+        else:
+            return 0
+    
     def next_level(self):
         self.balloons_popped_effect.empty()
         self.levels.level+=1
@@ -177,25 +183,12 @@ class Game:
             self.player.sprite.launch_effect.update()
             self.levels.balloons.update()
             self.balloons_popped_effect.update()
-            self.items.update()
+            self.wave_alpha_value()
+            self.items.update(self.wave_alpha_value(200))
             self.player.update(self.playing_game)
             
             self.collision()
             self.restart()
-    
-    def draw_player(self):
-        if self.player.sprite.shield_crash:
-            self.shield_animation+=self.mt*10
-            current_time=int(self.shield_animation)
-            if current_time%2==0:
-                self.player.sprite.draw_shield()
-                self.player.draw(self.screen)
-            if current_time==30:
-                self.player.sprite.shield=False
-                self.player.sprite.shield_crash=False
-        else:
-            self.player.sprite.draw_shield()
-            self.player.draw(self.screen)
     
     def draw(self):
         self.levels.draw_background()
@@ -205,16 +198,18 @@ class Game:
         self.levels.balloons.draw(self.screen)
         self.balloons_popped_effect.draw(self.screen)
         self.levels.draw_foreground()
-        self.draw_player()
+        self.player.sprite.draw_shield(self.mt)
+        self.player.draw(self.screen)
         self.items.draw(self.screen)
         self.levels.draw_text(self.playing_game,self.game_ready)
-        self.levels.draw_status(self.game_ready)
+        self.levels.draw_status(self.game_ready,self.mt,self.wave_alpha_value())
         if self.game_over_screen:
             pass
             # for r in range(26):
             #     for c in range(48):
             #         pygame.draw.rect(self.screen,('blue'),(c*24,r*24,24,24),2)
             #         # self.items.add(Item_and_Food(c*24,r*24))
+        # print(self.wave_alpha_value())
 #%%
 game=Game()
 pygame.quit()
