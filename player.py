@@ -36,8 +36,8 @@ class Player(pygame.sprite.Sprite):
         self.shield=False
         self.shield_index=0
         self.shield_crash=False
-        self.shield_crash_delay=0
         self.shield_animation_index=0
+        self.shield_status='normal'
         
         self.weapon_sprite=pygame.sprite.Group()
         self.launch_effect=pygame.sprite.GroupSingle()
@@ -70,6 +70,8 @@ class Player(pygame.sprite.Sprite):
             
             if key_input[pygame.K_s]:
                 self.shield=True
+                self.shield_crash=False
+                self.shield_animation_index=0
             elif key_input[pygame.K_d]:
                 self.weapon='double_wire'
             elif key_input[pygame.K_p]:
@@ -139,6 +141,13 @@ class Player(pygame.sprite.Sprite):
                     self.action='standby'
             else:
                 self.action='launch'
+        
+        if self.shield and not self.shield_crash:
+            self.shield_status='shield'
+        elif not self.shield and self.shield_crash:
+            self.shield_status='shield_crash'
+        else:
+            self.shield_status='normal'
     
     def animation(self):
         self.index+=self.animation_speed
@@ -162,7 +171,7 @@ class Player(pygame.sprite.Sprite):
     def draw_shield(self,mt):
         shield_image=self.player_images['shield']
         
-        if self.shield and not self.shield_crash:
+        if self.shield_status=='shield':
             self.shield_image=shield_image[int(self.shield_index)]
             
             self.shield_index+=0.1
@@ -177,9 +186,10 @@ class Player(pygame.sprite.Sprite):
                 self.shield_rect=self.shield_image.get_rect(center=(self.rect.centerx+5,self.rect.centery))
             
             self.screen.blit(self.shield_image,self.shield_rect)
-        elif self.shield and self.shield_crash:
+        elif self.shield_status=='shield_crash':
             self.shield_image=shield_image[2]
-            self.shield_crash_delay+=1
+            self.shield_animation_index+=mt*0.1
+            current_time=int(self.shield_animation_index)
             if not self.flip:
                 self.shield_image=pygame.transform.flip(self.shield_image,False,False)
                 self.shield_rect=self.shield_image.get_rect(center=(self.rect.centerx-5,self.rect.centery))
@@ -187,21 +197,22 @@ class Player(pygame.sprite.Sprite):
                 self.shield_image=pygame.transform.flip(self.shield_image,True,False)
                 self.shield_rect=self.shield_image.get_rect(center=(self.rect.centerx+5,self.rect.centery))
             
-            if self.shield_crash_delay<=20:
+            if current_time<=1:
                 self.screen.blit(self.shield_image,self.shield_rect)
             
-            self.shield_animation_index+=mt*0.1
-            current_time=int(self.shield_animation_index)
             if current_time%2==0:
                 self.image.set_alpha(255)
+                self.shield_image.set_alpha(255)
             else:
                 self.image.set_alpha(0)
+                self.shield_image.set_alpha(0)
             
             if current_time>=20:
-                current_time=0
-                self.shield=False
                 self.shield_crash=False
-            # print(current_time,self.shield,self.shield_crash)
+            print(current_time)
+        else:
+            self.shield_status='normal'
+            self.shield_animation_index=0
     
     def update(self,playing_game):
         self.key_input(playing_game)
@@ -209,4 +220,5 @@ class Player(pygame.sprite.Sprite):
         self.set_action()
         self.set_weapon_type()
         self.animation()
+        # print(self.shield,self.shield_crash,self.shield_status)
         

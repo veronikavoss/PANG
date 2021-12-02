@@ -27,8 +27,9 @@ class Level:
         if self.level==1:
             self.time=110
             self.background_image=self.background_images[self.level-1]
-            self.balloon=Balloon(self.asset,'red',0,(120,100),True,False)
-            self.balloons.add(self.balloon)
+            self.balloon1=Balloon(self.asset,'red',0,(120,100),True,False)
+            self.balloon2=Balloon(self.asset,'red',0,(520,100),True,False)
+            self.balloons.add(self.balloon1,self.balloon2)
         elif self.level==2:
             self.time=110
             self.background_image=self.background_images[self.level-1]

@@ -1,7 +1,6 @@
 #%%
 from setting import *
 from random import *
-from math import sin
 #%%
 class Item_and_Food(pygame.sprite.Sprite):
     def __init__(self,asset,center):
@@ -10,9 +9,11 @@ class Item_and_Food(pygame.sprite.Sprite):
         self.animation_index=0
         self.item_type=''
         self.item=''
+        self.dynamite=False
         self.get_item_images()
         self.set_items()
         self.image=self.item_image
+        self.image.set_alpha(255)
         self.rect=self.image.get_rect(center=center)
         self.update_timer=pygame.time.get_ticks()
     
@@ -55,14 +56,14 @@ class Item_and_Food(pygame.sprite.Sprite):
             self.item_type='clock_items'
             self.item='slow'
         elif self.item_image==self.dynamite_item:
-            self.item='dynamite'
             self.item_type='dynamite_item'
+            self.item='dynamite'
         elif self.item_image==self.shield_item:
-            self.item='shield'
             self.item_type='shield_item'
+            self.item='shield'
         elif self.item_image==self.bonus_item:
-            self.item='bonus'
             self.item_type='bonus_items'
+            self.item='bonus'
     
     def animation(self,ms):
         current_time=pygame.time.get_ticks()
