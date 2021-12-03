@@ -1,5 +1,6 @@
 #%%
-import pygame,os,sys
+from random import *
+import pygame,os,sys,time
 #%%
 title='PANG'
 # screen_size=screen_width,screen_height=1280,960

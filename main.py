@@ -1,5 +1,4 @@
 #%%
-from random import randint
 from setting import *
 from asset import Asset
 from start_screen import Start_Screen
@@ -13,8 +12,8 @@ class Game:
         pygame.init()
         pygame.display.set_caption(title)
         self.screen=pygame.display.set_mode(screen_size)
-        self.info=pygame.display.Info()
         self.clock=pygame.time.Clock()
+        self.last_time=time.time()
         self.running=True
         self.game_over_screen=False
         
@@ -61,15 +60,22 @@ class Game:
         self.player_die_delay=0
         self.dynamite=False
         self.dynamite_cooldown=0
+        self.item_slow=False
         self.loop()
     
     def loop(self):
         while self.running:
-            self.mt=self.clock.tick(FPS)//15
+            self.set_time()
             self.events()
             self.update()
             self.draw()
             pygame.display.update()
+    
+    def set_time(self):
+            self.dt=self.clock.tick(FPS)//15
+            self.dt1=time.time()-self.last_time
+            self.dt1+=60
+            self.last_time=time.time()
     
     def events(self):
         for event in pygame.event.get():
@@ -83,15 +89,14 @@ class Game:
     
     def set_status(self):
         if self.game_ready:
-            self.game_ready_delay+=self.mt*1
-        if self.game_ready_delay>=self.mt*120:
+            self.game_ready_delay+=self.dt*1
+        if self.game_ready_delay>=self.dt*120:
             self.game_ready=False
             self.playing_game=True
         if self.game_ready:
             self.status=2
     
     def collision(self):
-        global FPS
         if not self.player_die:
             for weapon in self.player.sprite.weapon_sprite:
                 for balloon in self.levels.balloons:
@@ -110,6 +115,7 @@ class Game:
                             balloon.kill()
                             if len(self.levels.balloons)==0:
                                 self.next_level()
+                        
                         weapon.kill()
         
             for player in self.player:
@@ -143,7 +149,9 @@ class Game:
                         if item.item_type=='clock_items':
                             if item.item=='slow':
                                 print('slow')
-                                # FPS=30
+                                self.item_slow=True
+                            else:
+                                self.item_slow=False
                             if item.item=='stop':
                                 print('stop')
                         
@@ -163,7 +171,17 @@ class Game:
                         
                         item.kill()
     
-    def run_dynamite(self,balloon):
+    def item_clock(self):
+        global FPS
+        if not self.player_die:
+            if self.item_slow:
+                FPS=30
+            else:
+                FPS=60
+        else:
+            FPS=60
+    
+    def run_item_dynamite(self,balloon):
         self.balloons_popped_effect.add(Balloons_Popped_Effect(self.asset,balloon.color,balloon.size,balloon.rect.center))
         self.asset.balloon_popped_sound.play()
         item_probability=randint(1,2)
@@ -173,17 +191,17 @@ class Game:
         self.levels.balloons.add(Balloon(self.asset,balloon.color,balloon.size+1,balloon.rect.center,True,True))
         self.levels.balloons.add(Balloon(self.asset,balloon.color,balloon.size+1,balloon.rect.center,False,True))
     
-    def dynamite_boom(self):
+    def set_item_dynamite(self):
         if self.dynamite:
             current_time=pygame.time.get_ticks()
             print(current_time-self.dynamite_cooldown)
             for balloon in self.levels.balloons:
                 if balloon.size==0:
-                    self.run_dynamite(balloon)
+                    self.run_item_dynamite(balloon)
                 elif balloon.size==1 and current_time-self.dynamite_cooldown>=500:
-                    self.run_dynamite(balloon)
+                    self.run_item_dynamite(balloon)
                 elif balloon.size==2 and current_time-self.dynamite_cooldown>=1000:
-                    self.run_dynamite(balloon)
+                    self.run_item_dynamite(balloon)
                     self.dynamite=False
     
     def wave_alpha_value(self,value=100):
@@ -222,10 +240,11 @@ class Game:
             self.balloons_popped_effect.update()
             self.wave_alpha_value()
             self.items.update(self.wave_alpha_value(200))
-            self.player.update(self.playing_game)
+            self.player.update(self.playing_game,self.dt1)
             
             self.collision()
-            self.dynamite_boom()
+            self.item_clock()
+            self.set_item_dynamite()
             self.restart()
     
     def draw(self):
@@ -234,20 +253,17 @@ class Game:
         self.player.sprite.launch_effect.draw(self.screen)
         self.score_board=pygame.draw.rect(self.screen,'black',score_board_rect)
         self.levels.draw_foreground()
-        self.player.sprite.draw_shield(self.mt)
+        self.player.sprite.draw_shield(self.dt)
         self.player.draw(self.screen)
         self.levels.balloons.draw(self.screen)
         self.balloons_popped_effect.draw(self.screen)
         self.items.draw(self.screen)
         self.levels.draw_text(self.playing_game,self.game_ready)
-        self.levels.draw_status(self.game_ready,self.mt,self.wave_alpha_value())
+        self.levels.draw_status(self.game_ready,self.dt,self.wave_alpha_value())
         if self.game_over_screen:
             pass
-            # for r in range(26):
-            #     for c in range(48):
-            #         pygame.draw.rect(self.screen,('blue'),(c*24,r*24,24,24),2)
-            #         # self.items.add(Item_and_Food(c*24,r*24))
-        # print(self.wave_alpha_value())
+        # print(self.dt,self.item_slow)
+        print(self.dt,self.dt1*60)
 #%%
 game=Game()
 pygame.quit()

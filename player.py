@@ -42,8 +42,9 @@ class Player(pygame.sprite.Sprite):
         self.weapon_sprite=pygame.sprite.Group()
         self.launch_effect=pygame.sprite.GroupSingle()
     
-    def key_input(self,playing_game):
-        self.rect.x+=self.dx
+    def key_input(self,playing_game,dt):
+        global FPS
+        self.rect.x+=self.dx*dt*60
         key_input=pygame.key.get_pressed()
         if playing_game and not self.action=='die':
             if key_input[pygame.K_LEFT]:
@@ -69,9 +70,13 @@ class Player(pygame.sprite.Sprite):
                 self.launch_key_pressed=False
             
             if key_input[pygame.K_s]:
-                self.shield=True
-                self.shield_crash=False
-                self.shield_animation_index=0
+                if self.shield_status=='normal':
+                    self.shield=True
+                    self.shield_crash=False
+                    self.shield_animation_index=0
+                elif self.shield_status=='shield_crash':
+                    self.shield=True
+                    self.shield_animation_index=0
             elif key_input[pygame.K_d]:
                 self.weapon='double_wire'
             elif key_input[pygame.K_p]:
@@ -82,7 +87,12 @@ class Player(pygame.sprite.Sprite):
                     self.weapon='power_wire'
             elif key_input[pygame.K_v]:
                 self.weapon='vulcan_missile'
-    
+            elif key_input[pygame.K_1]:
+                print(30,FPS)
+                FPS=30
+            elif key_input[pygame.K_2]:
+                FPS=60
+            
     def die(self):
         if self.hit_pos:
             self.dx=5
@@ -214,8 +224,8 @@ class Player(pygame.sprite.Sprite):
             self.shield_status='normal'
             self.shield_animation_index=0
     
-    def update(self,playing_game):
-        self.key_input(playing_game)
+    def update(self,playing_game,dt):
+        self.key_input(playing_game,dt)
         self.set_gravity()
         self.set_action()
         self.set_weapon_type()

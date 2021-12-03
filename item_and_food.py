@@ -1,6 +1,5 @@
 #%%
 from setting import *
-from random import *
 #%%
 class Item_and_Food(pygame.sprite.Sprite):
     def __init__(self,asset,center):
@@ -9,7 +8,6 @@ class Item_and_Food(pygame.sprite.Sprite):
         self.animation_index=0
         self.item_type=''
         self.item=''
-        self.dynamite=False
         self.get_item_images()
         self.set_items()
         self.image=self.item_image
