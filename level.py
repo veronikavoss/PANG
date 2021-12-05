@@ -25,11 +25,12 @@ class Level:
         self.balloons=pygame.sprite.Group()
         self.update_time=pygame.time.get_ticks()
         if self.level==1:
-            self.time=110
+            self.time=100
             self.background_image=self.background_images[self.level-1]
             self.balloon1=Balloon(self.asset,'red',0,(120,100),True,False)
-            self.balloon2=Balloon(self.asset,'red',0,(520,100),True,False)
-            self.balloons.add(self.balloon1,self.balloon2)
+            # self.balloon2=Balloon(self.asset,'red',0,(520,100),True,False)
+            # self.balloons.add(self.balloon1,self.balloon2)
+            self.balloons.add(self.balloon1)
         elif self.level==2:
             self.time=110
             self.background_image=self.background_images[self.level-1]

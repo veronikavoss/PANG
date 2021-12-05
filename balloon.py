@@ -2,7 +2,7 @@
 from setting import *
 #%%
 class Balloon(pygame.sprite.Sprite):
-    def __init__(self,asset,color,size,pos,flip,pop,index=0,speed=3,slow=False,stop=False):
+    def __init__(self,asset,color,size,pos,flip,pop,index=0,speed=3):
         pygame.sprite.Sprite.__init__(self)
         self.balloon_images=asset.balloon_images
         self.color=color
@@ -12,8 +12,8 @@ class Balloon(pygame.sprite.Sprite):
         self.pop=pop
         self.index=index
         self.speed=speed
-        self.slow=slow
-        self.stop=stop
+        self.stop=False
+        self.Warning_animation=False
         
         self.image=self.balloon_images[self.color][self.size]
         self.rect=self.image.get_rect(center=self.pos)
@@ -41,27 +41,35 @@ class Balloon(pygame.sprite.Sprite):
             self.speed_y=-6
     
     def set_movement(self):
-        self.dx=self.speed_x
-        self.rect.x+=self.dx
-        self.dy+=self.gravity
-        self.rect.y+=self.dy
-        
-        if self.rect.right>=stage_right:
-            self.rect.right=stage_right
-            self.speed_x=self.speed_x*-1
-        elif self.rect.left<=stage_left:
-            self.rect.left=stage_left
-            self.speed_x=self.speed_x*-1
-        
-        if self.rect.bottom>=stage_bottom:
-            self.rect.bottom=stage_bottom
-            self.dy=self.speed_y
-        elif self.rect.top<=stage_top:
-            self.rect.top=stage_top
-            self.dy=self.speed_y*-1
+        if not self.stop:
+            self.dx=self.speed_x
+            self.rect.x+=self.dx
+            self.dy+=self.gravity
+            self.rect.y+=self.dy
+            
+            if self.rect.right>=stage_right:
+                self.rect.right=stage_right
+                self.speed_x=self.speed_x*-1
+            elif self.rect.left<=stage_left:
+                self.rect.left=stage_left
+                self.speed_x=self.speed_x*-1
+            
+            if self.rect.bottom>=stage_bottom:
+                self.rect.bottom=stage_bottom
+                self.dy=self.speed_y
+            elif self.rect.top<=stage_top:
+                self.rect.top=stage_top
+                self.dy=self.speed_y*-1
     
-    def update(self):
+    def stop_animation(self,alpha):
+        if self.stop and self.Warning_animation:
+            self.image.set_alpha(alpha)
+        else:
+            self.image.set_alpha(255)
+    
+    def update(self,alpha):
         self.set_movement()
+        self.stop_animation(alpha)
 
 class Balloons_Popped_Effect(pygame.sprite.Sprite):
     def __init__(self,asset,color,size,center):

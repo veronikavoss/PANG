@@ -16,10 +16,10 @@ class Weapon(pygame.sprite.Sprite):
         self.flip=False
         self.vulcan_missile_ceiling=False
     
-    def animation(self):
-        self.rect.y-=8
+    def animation(self,dt):
+        self.rect.y-=8*dt
         animation=self.weapon_images[self.weapon_type]
-        self.index+=self.animation_speed
+        self.index+=self.animation_speed*dt
         
         if self.rect.top<=stage_top:
             if self.weapon_type=='normal':
@@ -38,7 +38,7 @@ class Weapon(pygame.sprite.Sprite):
             elif self.weapon_type=='power_wire':
                 self.animation_speed=0
                 self.rect.top=stage_top
-                self.power_wire_countdown+=1
+                self.power_wire_countdown+=1*dt
                 if self.power_wire_countdown<=180:
                     self.index=2
                 elif self.power_wire_countdown<=240:
@@ -57,8 +57,8 @@ class Weapon(pygame.sprite.Sprite):
         
         self.image=animation[int(self.index)]
     
-    def update(self):
-        self.animation()
+    def update(self,dt):
+        self.animation(dt)
 
 class Launch_Effect(pygame.sprite.Sprite):
     def __init__(self,asset,midbottom):
@@ -71,12 +71,13 @@ class Launch_Effect(pygame.sprite.Sprite):
         self.rect=self.image.get_rect(midbottom=midbottom)
         self.animation_speed=0.2
     
-    def animation(self):
-        self.index+=self.animation_speed
+    def animation(self,dt):
+        self.index+=self.animation_speed*dt
         animation=self.launch_effects
         if self.index>=len(animation)-1:
+            self.index=0
             self.kill()
         self.image=animation[int(self.index)]
     
-    def update(self):
-        self.animation()
+    def update(self,dt):
+        self.animation(dt)
