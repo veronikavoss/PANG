@@ -70,6 +70,7 @@ class Balloon(pygame.sprite.Sprite):
     def update(self,alpha):
         self.set_movement()
         self.stop_animation(alpha)
+        print(self.stop)
 
 class Balloons_Popped_Effect(pygame.sprite.Sprite):
     def __init__(self,asset,color,size,center):

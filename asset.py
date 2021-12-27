@@ -85,7 +85,7 @@ class Asset:
         weapon1=pygame.Surface((9,189))
         weapon1.blit(self.items_weapons_sheet,(0,0),(399,1568,9,189))
         weapon1.set_colorkey((103,150,86))
-        weapon1=pygame.transform.scale(weapon1,(9*3,189*3))
+        weapon1=pygame.transform.scale(weapon1,(9*scale,189*scale))
         weapon1_flip=pygame.Surface.copy(weapon1)
         weapon1_flip=pygame.transform.flip(weapon1_flip,True,False)
         self.weapon_images['normal'].append(weapon1)
@@ -95,7 +95,7 @@ class Asset:
         weapon2=pygame.Surface((9,191))
         weapon2.blit(self.items_weapons_sheet,(0,0),(382,1101,9,191))
         weapon2.set_colorkey((103,150,86))
-        weapon2=pygame.transform.scale(weapon2,(9*3,191*3))
+        weapon2=pygame.transform.scale(weapon2,(9*scale,191*scale))
         weapon2_flip=pygame.Surface.copy(weapon2)
         weapon2_flip=pygame.transform.flip(weapon2_flip,True,False)
         self.weapon_images['power_wire'].append(weapon2)
@@ -105,7 +105,7 @@ class Asset:
             weapon2_stop=pygame.Surface((9,191))
             weapon2_stop.blit(self.items_weapons_sheet,(0,0),weapon)
             weapon2_stop.set_colorkey((103,150,86))
-            weapon2_stop=pygame.transform.scale(weapon2_stop,(9*3,191*3))
+            weapon2_stop=pygame.transform.scale(weapon2_stop,(9*scale,191*scale))
             self.weapon_images['power_wire'].append(weapon2_stop)
         
         # vulcan_missile
@@ -114,7 +114,7 @@ class Asset:
             w3=pygame.Surface((16,9))
             w3.blit(self.items_weapons_sheet,(0,0),weapon)
             w3.set_colorkey((103,150,86))
-            w3=pygame.transform.scale(w3,(16*3,9*3))
+            w3=pygame.transform.scale(w3,(16*scale,9*scale))
             self.weapon_images['vulcan_missile'].append(w3)
     
     def get_launch_effect(self):
@@ -124,7 +124,7 @@ class Asset:
             le=pygame.Surface((16,14))
             le.blit(self.items_weapons_sheet,(0,0),effect)
             le.set_colorkey((103,150,86))
-            le=pygame.transform.scale(le,(16*3,14*3))
+            le=pygame.transform.scale(le,(16*scale,14*scale))
             self.launch_effects.append(le)
     
     def get_player(self):
@@ -165,7 +165,7 @@ class Asset:
             surface=pygame.Surface((die[2],die[3]))
             surface.blit(self.player_sheet,(0,0),die)
             surface.set_colorkey((0,255,0))
-            surface=pygame.transform.scale(surface,(die[2]*3,die[3]*3))
+            surface=pygame.transform.scale(surface,(die[2]*scale,die[3]*scale))
             self.player_images['die'].append(surface)
         
         shield_list=[[64,404,32,39],[104,404,32,39]]
@@ -173,13 +173,13 @@ class Asset:
             surface=pygame.Surface((shield[2],shield[3]))
             surface.blit(self.items_weapons_sheet,(0,0),shield)
             surface.set_colorkey((103,150,86))
-            surface=pygame.transform.scale(surface,(shield[2]*3,shield[3]*3))
+            surface=pygame.transform.scale(surface,(shield[2]*scale,shield[3]*scale))
             self.player_images['shield'].append(surface)
         for i in range(2):
             surface=pygame.Surface((32,39))
             surface.blit(self.crash_shield_sheet,(0,0),(i*40,0,32,39))
             surface.set_colorkey((0,0,0))
-            surface=pygame.transform.scale(surface,(32*3,39*3))
+            surface=pygame.transform.scale(surface,(32*scale,39*scale))
             self.player_images['shield'].append(surface)
     
     def get_balloons(self):
@@ -196,19 +196,19 @@ class Asset:
             r=pygame.Surface((br[2],br[3]))
             r.blit(self.balloons_sheet,(0,0),br)
             r.set_colorkey((128,64,0))
-            r=pygame.transform.scale(r,(br[2]*3,br[3]*3))
+            r=pygame.transform.scale(r,(br[2]*scale,br[3]*scale))
             self.balloon_images['red'].append(r)
         for bb in bb_pos:
             b=pygame.Surface((bb[2],bb[3]))
             b.blit(self.balloons_sheet,(0,0),bb)
             b.set_colorkey((128,64,0))
-            b=pygame.transform.scale(b,(bb[2]*3,bb[3]*3))
+            b=pygame.transform.scale(b,(bb[2]*scale,bb[3]*scale))
             self.balloon_images['blue'].append(b)
         for bg in bg_pos:
             g=pygame.Surface((bg[2],bg[3]))
             g.blit(self.balloons_sheet,(0,0),bg)
             g.set_colorkey((128,64,0))
-            g=pygame.transform.scale(g,(bg[2]*3,bg[3]*3))
+            g=pygame.transform.scale(g,(bg[2]*scale,bg[3]*scale))
             self.balloon_images['green'].append(g)
     
     def get_balloons_popped(self):
@@ -238,76 +238,76 @@ class Asset:
             bpr=pygame.Surface((effect[2],effect[3]))
             bpr.blit(self.balloon_popped_red_sheet,(0,0),effect)
             bpr.set_colorkey((0,0,0))
-            bpr=pygame.transform.scale(bpr,(effect[2]*3,effect[3]*3))
+            bpr=pygame.transform.scale(bpr,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['red']['size1'].append(bpr)
             
             bpb=pygame.Surface((effect[2],effect[3]))
             bpb.blit(self.balloon_popped_blue_sheet,(0,0),effect)
             bpb.set_colorkey((0,0,0))
-            bpb=pygame.transform.scale(bpb,(effect[2]*3,effect[3]*3))
+            bpb=pygame.transform.scale(bpb,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['blue']['size1'].append(bpb)
             
             bpg=pygame.Surface((effect[2],effect[3]))
             bpg.blit(self.balloon_popped_green_sheet,(0,0),effect)
             bpg.set_colorkey((0,0,0))
-            bpg=pygame.transform.scale(bpg,(effect[2]*3,effect[3]*3))
+            bpg=pygame.transform.scale(bpg,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['green']['size1'].append(bpg)
         
         for effect in size_2:
             bpr=pygame.Surface((effect[2],effect[3]))
             bpr.blit(self.balloon_popped_red_sheet,(0,0),effect)
             bpr.set_colorkey((0,0,0))
-            bpr=pygame.transform.scale(bpr,(effect[2]*3,effect[3]*3))
+            bpr=pygame.transform.scale(bpr,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['red']['size2'].append(bpr)
             
             bpb=pygame.Surface((effect[2],effect[3]))
             bpb.blit(self.balloon_popped_blue_sheet,(0,0),effect)
             bpb.set_colorkey((0,0,0))
-            bpb=pygame.transform.scale(bpb,(effect[2]*3,effect[3]*3))
+            bpb=pygame.transform.scale(bpb,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['blue']['size2'].append(bpb)
             
             bpg=pygame.Surface((effect[2],effect[3]))
             bpg.blit(self.balloon_popped_green_sheet,(0,0),effect)
             bpg.set_colorkey((0,0,0))
-            bpg=pygame.transform.scale(bpg,(effect[2]*3,effect[3]*3))
+            bpg=pygame.transform.scale(bpg,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['green']['size2'].append(bpg)
         
         for effect in size_3:
             bpr=pygame.Surface((effect[2],effect[3]))
             bpr.blit(self.balloon_popped_red_sheet,(0,0),effect)
             bpr.set_colorkey((0,0,0))
-            bpr=pygame.transform.scale(bpr,(effect[2]*3,effect[3]*3))
+            bpr=pygame.transform.scale(bpr,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['red']['size3'].append(bpr)
             
             bpb=pygame.Surface((effect[2],effect[3]))
             bpb.blit(self.balloon_popped_blue_sheet,(0,0),effect)
             bpb.set_colorkey((0,0,0))
-            bpb=pygame.transform.scale(bpb,(effect[2]*3,effect[3]*3))
+            bpb=pygame.transform.scale(bpb,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['blue']['size3'].append(bpb)
             
             bpg=pygame.Surface((effect[2],effect[3]))
             bpg.blit(self.balloon_popped_green_sheet,(0,0),effect)
             bpg.set_colorkey((0,0,0))
-            bpg=pygame.transform.scale(bpg,(effect[2]*3,effect[3]*3))
+            bpg=pygame.transform.scale(bpg,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['green']['size3'].append(bpg)
         
         for effect in size_4:
             bpr=pygame.Surface((effect[2],effect[3]))
             bpr.blit(self.balloon_popped_red_sheet,(0,0),effect)
             bpr.set_colorkey((0,0,0))
-            bpr=pygame.transform.scale(bpr,(effect[2]*3,effect[3]*3))
+            bpr=pygame.transform.scale(bpr,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['red']['size4'].append(bpr)
             
             bpb=pygame.Surface((effect[2],effect[3]))
             bpb.blit(self.balloon_popped_blue_sheet,(0,0),effect)
             bpb.set_colorkey((0,0,0))
-            bpb=pygame.transform.scale(bpb,(effect[2]*3,effect[3]*3))
+            bpb=pygame.transform.scale(bpb,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['blue']['size4'].append(bpb)
             
             bpg=pygame.Surface((effect[2],effect[3]))
             bpg.blit(self.balloon_popped_green_sheet,(0,0),effect)
             bpg.set_colorkey((0,0,0))
-            bpg=pygame.transform.scale(bpg,(effect[2]*3,effect[3]*3))
+            bpg=pygame.transform.scale(bpg,(effect[2]*scale,effect[3]*scale))
             self.balloons_popped_images['green']['size4'].append(bpg)
     
     def get_items(self):
@@ -323,7 +323,7 @@ class Asset:
                 surface=pygame.Surface((item[2],item[3]))
                 surface.blit(self.items_weapons_sheet,(0,0),item)
                 surface.set_colorkey((103,150,86))
-                surface=pygame.transform.scale(surface,(item[2]*3,item[3]*3))
+                surface=pygame.transform.scale(surface,(item[2]*scale,item[3]*scale))
                 item_surface_temp.append(surface)
         
         self.items_images={

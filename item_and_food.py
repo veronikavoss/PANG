@@ -11,7 +11,6 @@ class Item_and_Food(pygame.sprite.Sprite):
         self.get_item_images()
         self.set_items()
         self.image=self.item_image
-        self.image.set_alpha(255)
         self.rect=self.image.get_rect(center=center)
         self.update_timer=pygame.time.get_ticks()
     
@@ -63,15 +62,8 @@ class Item_and_Food(pygame.sprite.Sprite):
             self.item_type='bonus_items'
             self.item='bonus'
     
-    def animation(self,ms,dt):
-        current_time=pygame.time.get_ticks()
+    def animation(self,current_time,ms,dt):
         self.rect.y+=5*dt
-        if self.rect.bottom>=stage_bottom:
-            self.rect.bottom=stage_bottom
-            if current_time-self.update_timer>=5000:
-                self.image.set_alpha(ms)
-            if current_time-self.update_timer>=7000:
-                self.kill()
         
         if self.item_image==self.dynamite_item or self.item_image==self.shield_item:
             if self.item_image==self.dynamite_item:
@@ -87,7 +79,17 @@ class Item_and_Food(pygame.sprite.Sprite):
             self.image=item[int(self.animation_index)]
         else:
             self.image=self.item_image
+        
+        if self.rect.bottom>=stage_bottom:
+            self.rect.bottom=stage_bottom
+            if current_time-self.update_timer>=5000:
+                self.image.set_alpha(ms)
+            if current_time-self.update_timer>=7000:
+                self.image.set_alpha(255)
+                self.kill()
+        
+        print(current_time-self.update_timer)
     
-    def update(self,ms,dt):
-        self.animation(ms,dt)
+    def update(self,current_time,ms,dt):
+        self.animation(current_time,ms,dt)
 #%%

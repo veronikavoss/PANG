@@ -3,7 +3,7 @@ from setting import *
 from weapon import *
 #%%
 class Player(pygame.sprite.Sprite):
-    def __init__(self,screen,asset):
+    def __init__(self,screen,asset,x,y):
         pygame.sprite.Sprite.__init__(self)
         self.screen=screen
         self.asset=asset
@@ -18,7 +18,8 @@ class Player(pygame.sprite.Sprite):
         self.index=0
         self.animation_speed=0.1
         self.image=self.player_images[self.action][self.index]
-        self.rect=self.image.get_rect(midbottom=(screen_width//2,stage_bottom))
+        # self.rect=self.image.get_rect(midbottom=(screen_width//2,stage_bottom))
+        self.rect=self.image.get_rect(x=x,y=y)
         
         self.direction=pygame.math.Vector2(0,0)
         self.dx,self.dy=self.direction.x,self.direction.y
@@ -43,7 +44,6 @@ class Player(pygame.sprite.Sprite):
         self.launch_effect=pygame.sprite.GroupSingle()
     
     def key_input(self,playing_game,dt):
-        global FPS
         self.rect.x+=self.dx*dt
         key_input=pygame.key.get_pressed()
         if playing_game and not self.action=='die':
@@ -85,7 +85,6 @@ class Player(pygame.sprite.Sprite):
             elif key_input[pygame.K_v]:
                 self.weapon='vulcan_missile'
             elif key_input[pygame.K_1]:
-                print(30,FPS)
                 FPS=30
             elif key_input[pygame.K_2]:
                 FPS=60
@@ -219,9 +218,6 @@ class Player(pygame.sprite.Sprite):
                 else:
                     self.shield_status='normal'
                     self.shield=False
-            
-            print(self.current_time)
-            
         else:
             self.shield_status='normal'
             self.shield_animation_index=0
@@ -232,5 +228,3 @@ class Player(pygame.sprite.Sprite):
         self.set_action()
         self.set_weapon_type()
         self.animation(dt)
-        # print(self.shield,self.shield_crash,self.shield_status)
-        

@@ -48,7 +48,7 @@ class Game:
     def start(self):
         self.levels.levels()
         self.balloons_popped_effect=pygame.sprite.Group()
-        self.player=pygame.sprite.GroupSingle(Player(self.screen,self.asset))
+        # self.player=pygame.sprite.GroupSingle(Player(self.screen,self.asset))
         self.items=pygame.sprite.Group()
         
         self.game_ready=True
@@ -97,7 +97,7 @@ class Game:
     
     def collision(self):
         if not self.player_die:
-            for weapon in self.player.sprite.weapon_sprite:
+            for weapon in self.levels.player.sprite.weapon_sprite:
                 for balloon in self.levels.balloons:
                     if pygame.sprite.collide_mask(weapon,balloon):
                         self.asset.balloon_popped_sound.play()
@@ -121,35 +121,34 @@ class Game:
                         
                         weapon.kill()
         
-            for player in self.player:
+            for player in self.levels.player:
                 for balloon in self.levels.balloons:
-                    if pygame.sprite.collide_mask(player,balloon):
-                        # if not self.item_stop:
-                            if self.player.sprite.shield_status=='shield':
-                                self.player.sprite.shield_status='crashed'
-                                self.player.sprite.shield=False
-                            elif self.player.sprite.shield_status=='normal':
-                            # elif self.player.sprite.shield_status=='normal' and not self.player.sprite.shield or self.item_stop:
+                    if not self.item_stop:
+                        if pygame.sprite.collide_mask(player,balloon):
+                            if self.levels.player.sprite.shield_status=='shield':
+                                self.levels.player.sprite.shield_status='crashed'
+                                self.levels.player.sprite.shield=False
+                            elif self.levels.player.sprite.shield_status=='normal':
                                 pygame.time.delay(500)
                                 if balloon.rect.centerx<player.rect.centerx:
-                                    self.player.sprite.hit_pos=True
+                                    self.levels.player.sprite.hit_pos=True
                                 else:
-                                    self.player.sprite.hit_pos=False
+                                    self.levels.player.sprite.hit_pos=False
                                 self.asset.dead_sound.play()
                                 self.player_die=True
-                                self.player.sprite.action='die'
+                                self.levels.player.sprite.action='die'
                 
                 for item in self.items:
                     if pygame.sprite.collide_mask(player,item):
                         if item.item_type=='weapon_items':
-                            self.player.sprite.previous_weapon=self.player.sprite.weapon
+                            self.levels.player.sprite.previous_weapon=self.levels.player.sprite.weapon
                             if item.item=='power_wire':
-                                if self.player.sprite.previous_weapon=='double_wire':
-                                    self.player.sprite.weapon='double_power_wire'
+                                if self.levels.player.sprite.previous_weapon=='double_wire':
+                                    self.levels.player.sprite.weapon='double_power_wire'
                                 else:
-                                    self.player.sprite.weapon='power_wire'
+                                    self.levels.player.sprite.weapon='power_wire'
                             else:
-                                self.player.sprite.weapon=item.item
+                                self.levels.player.sprite.weapon=item.item
                         
                         if item.item_type=='clock_items':
                             if item.item=='slow':
@@ -162,11 +161,11 @@ class Game:
                                 self.item_stop_update_time=pygame.time.get_ticks()
                         
                         if item.item_type=='shield_item' and item.item=='shield':
-                            if self.player.sprite.shield_status=='normal':
-                                self.player.sprite.shield_status='shield'
-                                self.player.sprite.shield=True
-                            elif self.player.sprite.shield_status=='crashed':
-                                self.player.sprite.shield=True
+                            if self.levels.player.sprite.shield_status=='normal':
+                                self.levels.player.sprite.shield_status='shield'
+                                self.levels.player.sprite.shield=True
+                            elif self.levels.player.sprite.shield_status=='crashed':
+                                self.levels.player.sprite.shield=True
                         
                         if item.item_type=='dynamite_item':
                             if item.item=='dynamite':
@@ -194,6 +193,7 @@ class Game:
                     if self.current_time-self.item_stop_update_time>7000:
                         balloon.Warning_animation=False
                         balloon.stop=False
+                        self.item_stop=False
         
         else:FPS=60
     
@@ -210,8 +210,6 @@ class Game:
         else:
             self.levels.balloons.add(Balloon(self.asset,balloon.color,balloon.size+1,balloon.rect.center,True,True))
             self.levels.balloons.add(Balloon(self.asset,balloon.color,balloon.size+1,balloon.rect.center,False,True))
-        # self.levels.balloons.add(Balloon(self.asset,balloon.color,balloon.size+1,(balloon.rect.centerx+(balloon.rect.w//4),balloon.rect.centery),True,True))
-        # self.levels.balloons.add(Balloon(self.asset,balloon.color,balloon.size+1,(balloon.rect.centerx-(balloon.rect.w//4),balloon.rect.centery),False,True))
     
     def set_item_dynamite(self):
         if self.item_dynamite:
@@ -235,7 +233,7 @@ class Game:
         self.balloons_popped_effect.empty()
         self.levels.level+=1*self.dt
         self.levels.levels()
-        self.player=pygame.sprite.GroupSingle(Player(self.screen,self.asset))
+        # self.player=pygame.sprite.GroupSingle(Player(self.screen,self.asset))
         self.items.empty()
         self.game_ready=True
         self.game_ready_delay=0
@@ -254,13 +252,13 @@ class Game:
         self.set_status()
         if self.playing_game:
             self.levels.update(self.playing_game)
-            self.player.sprite.weapon_sprite.update(self.dt)
-            self.player.sprite.launch_effect.update(self.dt)
+            self.levels.player.sprite.weapon_sprite.update(self.dt)
+            self.levels.player.sprite.launch_effect.update(self.dt)
             self.levels.balloons.update(self.wave_alpha_value())
             self.balloons_popped_effect.update()
             self.wave_alpha_value()
-            self.items.update(self.wave_alpha_value(200),self.dt)
-            self.player.update(self.playing_game,self.dt)
+            self.items.update(self.current_time,self.wave_alpha_value(200),self.dt)
+            self.levels.player.update(self.playing_game,self.dt)
             
             self.collision()
             self.item_clock()
@@ -269,20 +267,20 @@ class Game:
     
     def draw(self):
         self.levels.draw_background()
-        self.player.sprite.weapon_sprite.draw(self.screen)
-        self.player.sprite.launch_effect.draw(self.screen)
+        self.levels.player.sprite.weapon_sprite.draw(self.screen)
+        self.levels.player.sprite.launch_effect.draw(self.screen)
         self.score_board=pygame.draw.rect(self.screen,'black',score_board_rect)
         self.levels.draw_foreground()
-        self.player.sprite.draw_shield(self.dt)
+        self.levels.player.sprite.draw_shield(self.dt)
         self.levels.balloons.draw(self.screen)
         self.balloons_popped_effect.draw(self.screen)
-        self.player.draw(self.screen)
+        self.levels.player.draw(self.screen)
         self.items.draw(self.screen)
         self.levels.draw_text(self.playing_game,self.game_ready)
         self.levels.draw_status(self.game_ready,self.dt,self.wave_alpha_value())
         if self.game_over_screen:
             pass
-        print(self.player.sprite.shield_status)
+        # print(self.wave_alpha_value())
 #%%
 game=Game()
 pygame.quit()
