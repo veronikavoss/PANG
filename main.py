@@ -276,6 +276,7 @@ class Game:
         self.balloons_popped_effect.draw(self.screen)
         self.levels.player.draw(self.screen)
         self.items.draw(self.screen)
+        self.levels.blocks.draw(self.screen)
         self.levels.draw_text(self.playing_game,self.game_ready)
         self.levels.draw_status(self.game_ready,self.dt,self.wave_alpha_value())
         if self.game_over_screen:

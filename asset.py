@@ -14,6 +14,7 @@ class Asset:
         self.balloon_popped_green_sheet=pygame.image.load(os.path.join(image_path,'balloon_popped_green.png')).convert_alpha()
         self.animals_sheet=pygame.image.load(os.path.join(image_path,'Animals.png')).convert_alpha()
         self.food_sheet=pygame.image.load(os.path.join(image_path,'Food.png')).convert_alpha()
+        self.block_sheet=pygame.image.load(os.path.join(image_path,'block.png')).convert_alpha()
         self.game_status_signal_sheet=pygame.image.load(os.path.join(image_path,'blueText.png')).convert_alpha()
         self.ui()
         self.get_background()
@@ -24,6 +25,7 @@ class Asset:
         self.get_balloons()
         self.get_balloons_popped()
         self.get_items()
+        self.get_block()
         self.get_sound()
         self.get_font()
     
@@ -334,6 +336,42 @@ class Asset:
             'bonus_items':{'bonus':item_surface_temp[8],'robot':item_surface_temp[9:12]},
             'shield_item':item_surface_temp[13:20]
         }
+    
+    def get_block(self):
+        self.block_images={
+            'blue':{'size1':[],'size2':[],'size3':[],'size4':[]},
+            'red':{'size1':[],'size2':[],'size3':[],'size4':[]},
+            'orange':{'size1':[],'size2':[],'size3':[],'size4':[]}
+        }
+        for w,size in enumerate(self.block_images['blue'],start=1):
+            for y,color in enumerate(self.block_images):
+                for x in range(5):
+                    block=pygame.Surface((w*8,8))
+                    block.blit(self.block_sheet,(0,0),(x*8+8,(y*168+64)+((w-1)*32),w*8,8))
+                    block.set_colorkey((103,150,86))
+                    block=pygame.transform.scale(block,(w*8*scale,8*scale))
+                    self.block_images[color][size].append(block)
+        # for y,color in enumerate(self.block_images):
+        #     for x in range(5):
+        #         block=pygame.Surface((16,8))
+        #         block.blit(self.block_sheet,(0,0),(x*8+8,y*168+96,16,8))
+        #         block.set_colorkey((103,150,86))
+        #         block=pygame.transform.scale(block,(16*scale,8*scale))
+        #         self.block_images[color]['size2'].append(block)
+        # for y,color in enumerate(self.block_images):
+        #     for x in range(5):
+        #         block=pygame.Surface((24,8))
+        #         block.blit(self.block_sheet,(0,0),(x*8+8,y*168+128,24,8))
+        #         block.set_colorkey((103,150,86))
+        #         block=pygame.transform.scale(block,(24*scale,8*scale))
+        #         self.block_images[color]['size3'].append(block)
+        # for y,color in enumerate(self.block_images):
+        #     for x in range(5):
+        #         block=pygame.Surface((32,8))
+        #         block.blit(self.block_sheet,(0,0),(x*8+8,y*168+160,32,8))
+        #         block.set_colorkey((103,150,86))
+        #         block=pygame.transform.scale(block,(32*scale,8*scale))
+        #         self.block_images[color]['size4'].append(block)
     
     def get_sound(self):
         self.start_screen_balloon_popped_sound=pygame.mixer.Sound(os.path.join(sound_path,'SFX/titleScreenAnimationSound_fix.wav'))
